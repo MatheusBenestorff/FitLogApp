@@ -11,11 +11,11 @@ services:
     ports:
       - "5432:5432"
 
-  fitlog-api:
-    build: ./fitlog-api
-    ports:
-      - "8080:80"
-    volumes:
-      - ./fitlog-api:/app
-    depends_on:
-      - fitlog-db
+  # fitlog-api:
+  #   build: ./fitlog-api
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - ./fitlog-api:/app
+  #   depends_on:
+  #     - fitlog-db
