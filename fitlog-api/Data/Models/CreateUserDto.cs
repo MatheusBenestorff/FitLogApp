@@ -2,14 +2,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FitLogApp.api.Data;
 
-public class User
+public class CreateUserDto
 {
-    public int Id { get; set; }
 
     [Required]
+    [StringLength(100)]
     public string Name { get; set; }
 
     [Required]
+    [EmailAddress]
     public string Email { get; set; }
 
     [Required]
@@ -17,5 +18,5 @@ public class User
 
     public string? Gender { get; set; }
 
-    public DateTime Birthday { get; set; }
+    public DateTime? Birthday { get; set; }
 }

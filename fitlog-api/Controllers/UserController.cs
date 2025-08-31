@@ -2,7 +2,6 @@ using FitLogApp.api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
-
 namespace FitLogApp.api.Controllers;
 
 [ApiController]
@@ -36,13 +35,20 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([FromBody] User user)
+    public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto create)
     {
 
-        if (await _appDbContext.Users.AnyAsync(u => u.Email == user.Email))
+        if (await _appDbContext.Users.AnyAsync(u => u.Email == create.Email))
         {
             return Conflict("An account with this email already exists.");
         }
+
+        var user = new User()
+        {
+            Password = BCrypt.Net.BCrypt.HashPassword(create.Password),
+            Email = create.Email,
+            Name = create.Name
+        };
 
         _appDbContext.Users.Add(user);
         await _appDbContext.SaveChangesAsync();
