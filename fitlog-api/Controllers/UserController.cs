@@ -112,4 +112,17 @@ public class UserController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginDto login)
+    {
+        var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == login.Email);
+
+        if (user == null || BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
+        {
+            return BadRequest("Invalid credentials.");
+        }
+
+        return Ok("Login successful!");
+    }
 }
