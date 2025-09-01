@@ -2,17 +2,24 @@ using FitLogApp.api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
+using FitLogApp.api.Services;
+using Microsoft.AspNetCore.Authorization;
+
 namespace FitLogApp.api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly AppDbContext _appDbContext;
+    private readonly ITokenService _tokenService;
 
-    public UserController(AppDbContext appDbContext)
+
+    public UserController(AppDbContext appDbContext, ITokenService tokenService)
     {
         _appDbContext = appDbContext;
+        _tokenService = tokenService;
     }
 
     [HttpGet]
@@ -118,11 +125,13 @@ public class UserController : ControllerBase
     {
         var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == login.Email);
 
-        if (user == null || BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
+        if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
         {
             return BadRequest("Invalid credentials.");
         }
 
-        return Ok("Login successful!");
+        var token = _tokenService.GenerateToken(user);
+
+        return Ok(new { token = token });
     }
 }
