@@ -1,0 +1,123 @@
+{
+	"task": "resolve this pipeline error",
+	"error":"ERROR: Run 'az acr update -n palfinger0south0america --admin-enabled true' to enable admin first.
+		ERROR: Run 'az acr update -n palfinger0south0america --admin-enabled true' to enable admin first.
+		ERROR: argument --registry-username: expected one argument
+
+		Examples from AI knowledge base:
+		az container create --resource-group MyResourceGroup --name myapp --image myimage:latest --cpu 1 --memory 1
+		Create a container in a container group with 1 core and 1Gb of memory.
+
+		az container create --resource-group MyResourceGroup --name myapp --image myimage:latest --assign-identity
+		Create a container group with a system assigned identity.
+
+		az storage account keys list --resource-group MyResourceGroup --account-name MyStorageAccount
+		List the access keys for a storage account.
+
+		https://docs.microsoft.com/en-US/cli/azure/container#az_container_create
+		Read more about the command in reference docs
+		ERROR: (InaccessibleImage) The image 'selenium/hub:4.23.0-20240828' in container group 'selenium-hub' is not accessible. Please check the image and registry 		credential.
+		Code: InaccessibleImage
+		Message: The image 'selenium/hub:4.23.0-20240828' in container group 'selenium-hub' is not accessible. Please check the image and registry credential.
+		ERROR: (InaccessibleImage) The image 'selenium/node-edge:4.23.0-20240828' in container group 'selenium-edge-node' is not accessible. Please check the image 		and registry 	credential.
+		Code: InaccessibleImage
+		Message: The image 'selenium/node-edge:4.23.0-20240828' in container group 'selenium-edge-node' is not accessible. Please check the image and registry 			credential.
+
+		##[error]Script failed with exit code: 1
+		/usr/bin/az account clear
+		Finishing: Deploy Container Group",
+	"pipeline": "trigger:
+				- main
+
+                variables:
+                azureContainerRegistry: 'palfinger0south0america.azurecr.io'
+                azureSubscriptionServiceConnection: 'MADAL_Resources (fbca5ccd-3835-4919-9358-a022c5e94541)'
+                resourceGroup: 'RG_VEHICULAR_INTEGRATION'
+                imageName: 'anfirauto'
+                tag: '$(Build.BuildId)'
+
+                stages:
+                - stage: BuildAndDeploy
+                displayName: Build and Deploy Containers
+                jobs:
+                - job: Build
+                    displayName: Build and Push Image
+                    pool:
+                    vmImage: 'ubuntu-latest'
+                    steps:
+                    # Passo 1: Fazer login no Azure Container Registry (ACR)
+                    - task: AzureCLI@2
+                    displayName: 'Login to ACR'
+                    inputs:
+                        azureSubscription: '$(azureSubscriptionServiceConnection)'
+                        scriptType: 'bash'
+                        scriptLocation: 'inlineScript'
+                        inlineScript: |
+                        az acr login --name $(azureContainerRegistry)
+
+                    # Passo 2: Construir e enviar a imagem
+                    - task: Docker@2
+                    displayName: 'Build and push AnfirAuto image'
+                    inputs:
+                        command: 'buildAndPush'
+                        repository: '$(azureContainerRegistry)/$(imageName)'
+                        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+                        tags: |
+                        $(tag)
+
+                    # Passo 3: Deploy containers
+                    - task: AzureCLI@2
+                    displayName: 'Deploy Container Group'
+                    inputs:
+                        azureSubscription: '$(azureSubscriptionServiceConnection)'
+                        scriptType: 'bash'
+                        scriptLocation: 'inlineScript'
+                        inlineScript: |
+                        # credenciais ACR
+                        ACR_USERNAME=$(az acr credential show --name palfinger0south0america --query "username" -o tsv)
+                        ACR_PASSWORD=$(az acr credential show --name palfinger0south0america --query "passwords[0].value" -o tsv)
+
+                        # cria ou atualiza o container group
+                        az container create \
+                            --resource-group $(resourceGroup) \
+                            --name anfirauto-app \
+                            --image $(azureContainerRegistry)/$(imageName):$(tag) \
+                            --registry-username $ACR_USERNAME \
+                            --registry-password $ACR_PASSWORD \
+                            --cpu 1 --memory 1.5 \
+                            --ports 80 \
+                            --environment-variables \
+                                Selenium__Hub=http://selenium-hub:4444/wd/hub \
+                            --dns-name-label anfirauto-app-$(Build.BuildId) \
+                            --os-type Linux \
+                            --restart-policy Never \
+                            --command-line "dotnet AnfirAuto.Api.dll" \
+                            --ip-address Public \
+                            --protocol TCP \
+                            --azure-file-volume-mount-path /mnt/data \
+                            --azure-file-volume-account-name mystorageaccount \
+                            --azure-file-volume-account-key mystoragekey \
+                            --azure-file-volume-share-name myshare
+
+                        # adiciona Selenium Hub (imagem pública, sem credenciais)
+                        az container create \
+                            --resource-group $(resourceGroup) \
+                            --name selenium-hub \
+                            --image selenium/hub:4.23.0-20240828 \
+                            --cpu 1 --memory 1 \
+                            --ports 4444 \
+                            --dns-name-label selenium-hub-$(Build.BuildId) \
+                            --os-type Linux \
+                            --restart-policy Never
+
+                        # adiciona Selenium Node Edge (imagem pública, sem credenciais)
+                        az container create \
+                            --resource-group $(resourceGroup) \
+                            --name selenium-edge-node \
+                            --image selenium/node-edge:4.23.0-20240828 \
+                            --cpu 2 --memory 2 \
+                            --environment-variables SE_EVENT_BUS_HOST=selenium-hub SE_EVENT_BUS_PUBLISH_PORT=4442 SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
+                            --os-type Linux \
+                            --restart-policy Never",
+    "output language": "Portuguese PT-BR"
+}

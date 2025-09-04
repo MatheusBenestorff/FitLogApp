@@ -13,9 +13,10 @@ services:
 
   fitlog-api:
     build: ./fitlog-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
     ports:
       - "8080:80"
-    volumes:
-      - ./fitlog-api:/app
     depends_on:
       - fitlog-db
