@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<ITokenService, TokenService>();
 
@@ -39,27 +40,32 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-      policy =>
-      {
-          policy.WithOrigins("http://localhost:3000")
+    policy =>
+        {
+            policy.AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
-      });
+        });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("http://localhost:8080/swagger/v1/swagger.json", "FitLog API");
+    c.RoutePrefix = string.Empty;
+});
 
-app.MapOpenApi();
-app.UseSwaggerUI(options =>
-        options.SwaggerEndpoint("/openapi/v1.json", "FitLog API"));
-
-// app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

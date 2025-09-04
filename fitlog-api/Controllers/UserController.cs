@@ -41,6 +41,7 @@ public class UserController : ControllerBase
         return user;
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto create)
     {
