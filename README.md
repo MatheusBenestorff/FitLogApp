@@ -53,6 +53,6 @@ docker-compose up
 
 Once the containers are up and running, you can access the services at the following URLs:
 
-- **API (Swagger UI):** http://localhost:8080/
+- **API (Swagger UI):** http://localhost:8080
 
 - **Frontend Application:** http://localhost:3000

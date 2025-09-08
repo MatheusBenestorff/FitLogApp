@@ -18,4 +18,7 @@ public class User
     public string? Gender { get; set; }
 
     public DateTime? Birthday { get; set; }
+
+    public List<Workout> Workouts { get; set; }
+
 }
