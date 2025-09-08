@@ -57,10 +57,10 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = string.Empty;
 });
 
-if (app.Environment.IsProduction())
-{
-    app.UseHttpsRedirection();
-}
+// if (app.Environment.IsProduction())
+// {
+//     app.UseHttpsRedirection();
+// }
 
 app.UseCors(MyAllowSpecificOrigins);
 

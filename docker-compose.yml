@@ -14,7 +14,8 @@ services:
   fitlog-api:
     build: ./fitlog-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      #Adicionar quando for aplicar novas migrations no banco
+      # - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
     ports:
       - "8080:80"

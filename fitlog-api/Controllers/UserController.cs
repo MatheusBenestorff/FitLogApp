@@ -22,12 +22,14 @@ public class UserController : ControllerBase
         _tokenService = tokenService;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IEnumerable<User>> GetAllUsers()
     {
         return await _appDbContext.Users.ToListAsync();
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(int id)
     {
@@ -68,6 +70,7 @@ public class UserController : ControllerBase
         );
     }
 
+    [AllowAnonymous]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto update)
     {
@@ -85,7 +88,14 @@ public class UserController : ControllerBase
 
         if (!string.IsNullOrEmpty(update.Email))
         {
-            existingUser.Email = update.Email;
+            if (await _appDbContext.Users.AnyAsync(u => u.Email == update.Email))
+            {
+                return Conflict("An account with this email already exists.");
+            }
+            else
+            {
+                existingUser.Email = update.Email;
+            }
         }
 
         if (update.Gender != null)
@@ -93,9 +103,9 @@ public class UserController : ControllerBase
             existingUser.Gender = update.Gender;
         }
 
-        if (update.Birthday != default(DateTime))
+        if (update.Birthday.HasValue)
         {
-            existingUser.Birthday = update.Birthday;
+            existingUser.Birthday = update.Birthday.Value;
         }
 
         await _appDbContext.SaveChangesAsync();
@@ -103,6 +113,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
+    [AllowAnonymous]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
@@ -121,6 +132,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto login)
     {

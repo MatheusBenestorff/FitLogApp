@@ -17,5 +17,5 @@ public class User
 
     public string? Gender { get; set; }
 
-    public DateTime Birthday { get; set; }
+    public DateTime? Birthday { get; set; }
 }
