@@ -27,5 +27,67 @@ public class WorkoutController : ControllerBase
         return Ok(workouts);
     }
 
+    [HttpGet("{id}", Name = "GetUserWorkoutById")]
+    public async Task<ActionResult<Workout>> GetUserWorkoutById(int id)
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString))
+        {
+            return Unauthorized();
+        }
+        var userId = int.Parse(userIdString);
+
+        var workout = await _appDbContext.Workouts
+            .FirstOrDefaultAsync(w => w.Id == id && w.UserId == userId);
+
+        if (workout == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(workout);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Workout>> CreateWorkout([FromBody] CreateWorkoutDto workoutDto)
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString))
+        {
+            return Unauthorized();
+        }
+        var userId = int.Parse(userIdString);
+
+        if (await _appDbContext.Workouts.AnyAsync(w => w.UserId == userId && w.Name == workoutDto.Name))
+        {
+            return Conflict("You already have a workout with this name.");
+        }
+
+        var workout = new Workout
+        {
+            Name = workoutDto.Name,
+            UserId = userId,
+            Exercises = new List<Exercise>()
+        };
+
+        if (workoutDto.ExerciseIds != null && workoutDto.ExerciseIds.Any())
+        {
+            var exercises = await _appDbContext.Exercises
+                .Where(e => workoutDto.ExerciseIds.Contains(e.Id))
+                .ToListAsync();
+            
+            workout.Exercises.AddRange(exercises);
+        }
+
+        _appDbContext.Workouts.Add(workout);
+        await _appDbContext.SaveChangesAsync();
+
+        return CreatedAtAction(
+            nameof(GetUserWorkoutById),
+            new { id = workout.Id },
+            workout
+        );
+    }
+
 
 }
