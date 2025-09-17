@@ -1,6 +1,6 @@
 # FitLog
 
-Build custom workouts and track your progress.
+Create custom workouts and track your progress.
 
 ## Architecture
 
