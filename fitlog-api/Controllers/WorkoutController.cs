@@ -1,3 +1,10 @@
+using FitLogApp.api.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
+using FitLogApp.api.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace FitLogApp.api.Controllers;
 
 [ApiController]
@@ -7,6 +14,12 @@ public class WorkoutController : ControllerBase
 {
     private readonly AppDbContext _appDbContext;
     private readonly ITokenService _tokenService;
+
+    public WorkoutController(AppDbContext appDbContext, ITokenService tokenService)
+    {
+        _appDbContext = appDbContext;
+        _tokenService = tokenService;
+    }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Workout>>> GetAllWorkoutsByUser()
@@ -75,7 +88,7 @@ public class WorkoutController : ControllerBase
             var exercises = await _appDbContext.Exercises
                 .Where(e => workoutDto.ExerciseIds.Contains(e.Id))
                 .ToListAsync();
-            
+
             workout.Exercises.AddRange(exercises);
         }
 

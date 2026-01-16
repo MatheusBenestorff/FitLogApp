@@ -15,6 +15,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IWorkoutService, WorkoutService>();
+
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>

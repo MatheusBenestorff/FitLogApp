@@ -22,14 +22,12 @@ public class UserController : ControllerBase
         _tokenService = tokenService;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public async Task<IEnumerable<User>> GetAllUsers()
     {
         return await _appDbContext.Users.ToListAsync();
     }
 
-    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(int id)
     {
@@ -70,7 +68,6 @@ public class UserController : ControllerBase
         );
     }
 
-    [AllowAnonymous]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto update)
     {
@@ -113,7 +110,6 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
