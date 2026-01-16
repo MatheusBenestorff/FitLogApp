@@ -1,8 +1,6 @@
 using FitLogApp.api.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
 using FitLogApp.api.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 namespace FitLogApp.api.Controllers;
@@ -12,118 +10,66 @@ namespace FitLogApp.api.Controllers;
 [Authorize]
 public class UserController : ControllerBase
 {
-    private readonly AppDbContext _appDbContext;
-    private readonly ITokenService _tokenService;
+    private readonly IUserService _userService;
 
-
-    public UserController(AppDbContext appDbContext, ITokenService tokenService)
+    public UserController(IUserService userService)
     {
-        _appDbContext = appDbContext;
-        _tokenService = tokenService;
+        _userService = userService;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<User>> GetAllUsers()
+    public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
     {
-        return await _appDbContext.Users.ToListAsync();
+        var users = await _userService.GetAllUsersAsync();
+        return Ok(users);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(int id)
     {
-        var user = await _appDbContext.Users.FindAsync(id);
-
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        return user;
+        var user = await _userService.GetUserByIdAsync(id);
+        if (user == null) return NotFound();
+        return Ok(user);
     }
 
     [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto create)
     {
-
-        if (await _appDbContext.Users.AnyAsync(u => u.Email == create.Email))
+        try
         {
-            return Conflict("An account with this email already exists.");
+            var user = await _userService.CreateUserAsync(create);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
-
-        var user = new User()
+        catch (InvalidOperationException ex)
         {
-            Password = BCrypt.Net.BCrypt.HashPassword(create.Password),
-            Email = create.Email,
-            Name = create.Name
-        };
-
-        _appDbContext.Users.Add(user);
-        await _appDbContext.SaveChangesAsync();
-
-        return CreatedAtAction(
-            nameof(GetUserById),
-            new { id = user.Id },
-            user
-        );
+            return Conflict(ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto update)
     {
-        var existingUser = await _appDbContext.Users.FindAsync(id);
-
-        if (existingUser == null)
+        try
         {
-            return NotFound();
-        }
+            var updatedUser = await _userService.UpdateUserAsync(id, update);
 
-        if (!string.IsNullOrEmpty(update.Name))
+            if (updatedUser == null) return NotFound();
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
         {
-            existingUser.Name = update.Name;
+            return Conflict(ex.Message);
         }
-
-        if (!string.IsNullOrEmpty(update.Email))
-        {
-            if (await _appDbContext.Users.AnyAsync(u => u.Email == update.Email))
-            {
-                return Conflict("An account with this email already exists.");
-            }
-            else
-            {
-                existingUser.Email = update.Email;
-            }
-        }
-
-        if (update.Gender != null)
-        {
-            existingUser.Gender = update.Gender;
-        }
-
-        if (update.Birthday.HasValue)
-        {
-            existingUser.Birthday = update.Birthday.Value;
-        }
-
-        await _appDbContext.SaveChangesAsync();
-
-        return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _appDbContext.Users.FindAsync(id);
+        var deleted = await _userService.DeleteUserAsync(id);
 
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        _appDbContext.Users.Remove(user);
-
-        await _appDbContext.SaveChangesAsync();
-
+        if (!deleted) return NotFound();
 
         return NoContent();
     }
@@ -132,14 +78,12 @@ public class UserController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto login)
     {
-        var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == login.Email);
+        var token = await _userService.LoginAsync(login);
 
-        if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
+        if (token == null)
         {
             return BadRequest("Invalid credentials.");
         }
-
-        var token = _tokenService.GenerateToken(user);
 
         return Ok(new { token = token });
     }
