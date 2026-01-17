@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IWorkoutService, WorkoutService>();
+builder.Services.AddScoped<IExerciseService, ExerciseService>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

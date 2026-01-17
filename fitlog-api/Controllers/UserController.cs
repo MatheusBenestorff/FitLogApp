@@ -5,10 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FitLogApp.api.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class UserController : ControllerBase
+public class UserController : BaseController
 {
     private readonly IUserService _userService;
 
