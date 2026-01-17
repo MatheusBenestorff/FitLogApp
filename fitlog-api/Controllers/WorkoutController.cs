@@ -1,10 +1,9 @@
 using FitLogApp.api.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
 using FitLogApp.api.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+
 namespace FitLogApp.api.Controllers;
 
 [ApiController]
@@ -12,51 +11,32 @@ namespace FitLogApp.api.Controllers;
 [Authorize]
 public class WorkoutController : ControllerBase
 {
-    private readonly AppDbContext _appDbContext;
-    private readonly ITokenService _tokenService;
+    private readonly IWorkoutService _workoutService;
 
-    public WorkoutController(AppDbContext appDbContext, ITokenService tokenService)
+    public WorkoutController(IWorkoutService workoutService)
     {
-        _appDbContext = appDbContext;
-        _tokenService = tokenService;
+        _workoutService = workoutService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Workout>>> GetAllWorkoutsByUser()
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        int? userId = GetUserId();
+        if (userId == null) return Unauthorized();
 
-        if (string.IsNullOrEmpty(userIdString))
-        {
-            return Unauthorized();
-        }
-
-        var userId = int.Parse(userIdString);
-
-        var workouts = await _appDbContext.Workouts
-            .Where(w => w.UserId == userId)
-            .ToListAsync();
-
+        var workouts = await _workoutService.GetAllWorkoutsByUserIdAsync(userId.Value);
         return Ok(workouts);
     }
 
     [HttpGet("{id}", Name = "GetUserWorkoutById")]
     public async Task<ActionResult<Workout>> GetUserWorkoutById(int id)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdString))
-        {
-            return Unauthorized();
-        }
-        var userId = int.Parse(userIdString);
+        int? userId = GetUserId();
+        if (userId == null) return Unauthorized();
 
-        var workout = await _appDbContext.Workouts
-            .FirstOrDefaultAsync(w => w.Id == id && w.UserId == userId);
+        var workout = await _workoutService.GetWorkoutByIdAsync(id, userId.Value);
 
-        if (workout == null)
-        {
-            return NotFound();
-        }
+        if (workout == null) return NotFound();
 
         return Ok(workout);
     }
@@ -64,43 +44,30 @@ public class WorkoutController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Workout>> CreateWorkout([FromBody] CreateWorkoutDto workoutDto)
     {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdString))
+        int? userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        try
         {
-            return Unauthorized();
+            var workout = await _workoutService.CreateWorkoutAsync(workoutDto, userId.Value);
+
+            return CreatedAtAction(
+                nameof(GetUserWorkoutById),
+                new { id = workout.Id },
+                workout
+            );
         }
-        var userId = int.Parse(userIdString);
-
-        if (await _appDbContext.Workouts.AnyAsync(w => w.UserId == userId && w.Name == workoutDto.Name))
+        catch (InvalidOperationException ex)
         {
-            return Conflict("You already have a workout with this name.");
+            return Conflict(ex.Message);
         }
-
-        var workout = new Workout
-        {
-            Name = workoutDto.Name,
-            UserId = userId,
-            Exercises = new List<Exercise>()
-        };
-
-        if (workoutDto.ExerciseIds != null && workoutDto.ExerciseIds.Any())
-        {
-            var exercises = await _appDbContext.Exercises
-                .Where(e => workoutDto.ExerciseIds.Contains(e.Id))
-                .ToListAsync();
-
-            workout.Exercises.AddRange(exercises);
-        }
-
-        _appDbContext.Workouts.Add(workout);
-        await _appDbContext.SaveChangesAsync();
-
-        return CreatedAtAction(
-            nameof(GetUserWorkoutById),
-            new { id = workout.Id },
-            workout
-        );
     }
 
-
+    // Aux
+    private int? GetUserId()
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return null;
+        return int.Parse(userIdString);
+    }
 }
