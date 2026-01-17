@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace FitLogApp.api.Controllers;
 
@@ -15,12 +16,19 @@ public abstract class BaseController : ControllerBase
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (int.TryParse(userIdString, out int id))
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                userIdString = User.FindFirstValue(JwtRegisteredClaimNames.NameId) ??
+                               User.FindFirstValue("nameid") ??
+                               User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            }
+
+            if (!string.IsNullOrEmpty(userIdString) && int.TryParse(userIdString, out int id))
             {
                 return id;
             }
 
-            throw new UnauthorizedAccessException("User ID not found in token.");
+            throw new UnauthorizedAccessException("Token is valid, but the user ID was not found in Claims.");
         }
     }
 }

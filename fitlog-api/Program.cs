@@ -43,9 +43,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddSingleton<ITokenService, TokenService>();
-builder.Services.AddSingleton<IUserService, UserService>();
-builder.Services.AddSingleton<IWorkoutService, WorkoutService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 
 

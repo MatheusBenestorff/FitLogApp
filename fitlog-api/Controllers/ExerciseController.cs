@@ -26,7 +26,7 @@ public class ExerciseController : BaseController
         try
         {
             var exercise = await _exerciseService.CreateCustomExerciseAsync(dto, CurrentUserId);
-            return CreatedAtAction(nameof(GetAllExercises), new { id = exercise.Id }, exercise);
+            return Created("", exercise);
         }
         catch (InvalidOperationException ex)
         {
