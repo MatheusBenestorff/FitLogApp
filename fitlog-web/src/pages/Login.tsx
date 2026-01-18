@@ -3,7 +3,9 @@ import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { login } from "../services/authService";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
+import logoImg from "../assets/logo.png";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -24,46 +26,65 @@ export const Login: React.FC = () => {
       signIn(data.token);
       navigate("/dashboard");
     } catch (err: any) {
-      const message = err.response?.data || "Falha ao fazer login";
-      setError(typeof message === "string" ? message : "Erro de conexão");
+      setError("Credenciais inválidas");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">
-          FitLog Login
-        </h2>
+    <div className="min-h-screen flex items-center justify-center bg-navy-900 p-6">
+      <div className="w-full flex flex-col items-center max-w-[320px]">
+        <img
+          src={logoImg}
+          alt="Logo FitLog"
+          className="w-[296px] h-auto mb-8 object-contain"
+        />
 
         {error && (
-          <div className="bg-red-500 text-white p-3 rounded mb-4 text-sm">
+          <span className="text-red-500 text-sm mb-4 bg-red-100/10 p-2 rounded w-full text-center">
             {error}
-          </div>
+          </span>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <Input
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
-            required
-          />
+        <form
+          onSubmit={handleSubmit}
+          className="w-full flex flex-col items-center"
+        >
+          {/* Email Input */}
+          <div className="w-full max-w-[300px] mt-[18px]">
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="E-mail"
+              required
+            />
+          </div>
 
-          <Input
-            label="Senha"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="********"
-            required
-          />
+          {/* Password Input */}
+          <div className="w-full max-w-[300px] mt-[16px]">
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Senha"
+              required
+            />
+          </div>
 
-          <div className="mt-6">
+          {/* Link "Não possui conta?" (TextView) */}
+          <div className="w-full max-w-[300px] mt-[16px] flex justify-start">
+            <Link
+              to="/register"
+              className="text-brand-orange text-sm hover:underline"
+            >
+              Não possui conta? Cadastre-se aqui!
+            </Link>
+          </div>
+
+          {/* Button (LoginButton) */}
+          <div className="w-full max-w-[300px] mt-[24px]">
             <Button type="submit" isLoading={loading}>
               Entrar
             </Button>

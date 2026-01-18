@@ -12,16 +12,20 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={`w-full font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors
+      className={`
+        w-full font-bold py-3 px-4 rounded 
+        transition-transform active:scale-95
+        text-black 
         ${
           props.disabled || isLoading
-            ? "bg-gray-500 cursor-not-allowed text-gray-300"
-            : "bg-blue-600 hover:bg-blue-700 text-white"
-        }`}
+            ? "bg-gray-500 cursor-not-allowed"
+            : "bg-brand-orange hover:bg-orange-600"
+        }
+      `}
       {...props}
       disabled={props.disabled || isLoading}
     >
-      {isLoading ? "Carregando..." : children}
+      {isLoading ? "Entrando..." : children}
     </button>
   );
 };
