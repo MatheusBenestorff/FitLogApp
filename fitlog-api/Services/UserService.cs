@@ -35,7 +35,9 @@ public class UserService : IUserService
         {
             Name = create.Name,
             Email = create.Email,
-            Password = BCrypt.Net.BCrypt.HashPassword(create.Password)
+            Password = BCrypt.Net.BCrypt.HashPassword(create.Password),
+            Gender = create.Gender,
+            Birthday = DateTime.SpecifyKind(create.Birthday, DateTimeKind.Utc)
         };
 
         _context.Users.Add(user);

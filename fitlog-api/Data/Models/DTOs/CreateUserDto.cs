@@ -16,7 +16,7 @@ public class CreateUserDto
     [Required]
     public string Password { get; set; }
 
-    public string? Gender { get; set; }
+    public string Gender { get; set; }
 
-    public DateTime? Birthday { get; set; }
+    public DateTime Birthday { get; set; }
 }
