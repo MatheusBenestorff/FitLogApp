@@ -20,11 +20,23 @@ public class WorkoutService : IWorkoutService
             .ToListAsync();
     }
 
-    public async Task<Workout?> GetWorkoutByIdAsync(int id, int userId)
+    public async Task<WorkoutDetailsDto?> GetWorkoutByIdAsync(int id, int userId)
     {
         return await _context.Workouts
-            .Include(w => w.Exercises)
-            .FirstOrDefaultAsync(w => w.Id == id && w.UserId == userId);
+            .Where(w => w.Id == id && w.UserId == userId)
+            .Select(w => new WorkoutDetailsDto
+            {
+                Id = w.Id,
+                Name = w.Name,
+                UserId = w.UserId,
+                Exercises = w.Exercises.Select(e => new ExerciseDetailsDto
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    MuscleGroup = e.MuscleGroup
+                }).ToList()
+            })
+            .FirstOrDefaultAsync();
     }
 
     public async Task<Workout> CreateWorkoutAsync(CreateWorkoutDto dto, int userId)
