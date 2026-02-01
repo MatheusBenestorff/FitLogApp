@@ -12,15 +12,26 @@ public class WorkoutService : IWorkoutService
         _context = context;
     }
 
-    public async Task<IEnumerable<Workout>> GetAllWorkoutsByUserIdAsync(int userId)
+    public async Task<IEnumerable<WorkoutDetailsDto>> GetAllWorkoutsByUserIdAsync(int userId)
     {
         return await _context.Workouts
             .Where(w => w.UserId == userId)
-            .Include(w => w.Exercises)
+            .Select(w => new WorkoutDetailsDto
+            {
+                Id = w.Id,
+                Name = w.Name,
+                UserId = w.UserId,
+                Exercises = w.Exercises.Select(e => new ExerciseDetailsDto
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    MuscleGroup = e.MuscleGroup
+                }).ToList()
+            })
             .ToListAsync();
     }
 
-    public async Task<WorkoutDetailsDto?> GetWorkoutByIdAsync(int id, int userId)
+    public async Task<WorkoutDetailsDto?> GetUserWorkoutByIdAsync(int id, int userId)
     {
         return await _context.Workouts
             .Where(w => w.Id == id && w.UserId == userId)
@@ -39,7 +50,7 @@ public class WorkoutService : IWorkoutService
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Workout> CreateWorkoutAsync(CreateWorkoutDto dto, int userId)
+    public async Task<WorkoutDetailsDto> CreateWorkoutAsync(CreateWorkoutDto dto, int userId)
     {
         if (await _context.Workouts.AnyAsync(w => w.UserId == userId && w.Name == dto.Name))
         {
@@ -65,6 +76,17 @@ public class WorkoutService : IWorkoutService
         _context.Workouts.Add(workout);
         await _context.SaveChangesAsync();
 
-        return workout;
+        return new WorkoutDetailsDto
+        {
+            Id = workout.Id,
+            Name = workout.Name,
+            UserId = workout.UserId,
+            Exercises = workout.Exercises.Select(e => new ExerciseDetailsDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                MuscleGroup = e.MuscleGroup
+            }).ToList()
+        };
     }
 }

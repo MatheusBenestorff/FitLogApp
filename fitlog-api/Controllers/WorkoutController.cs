@@ -24,7 +24,7 @@ public class WorkoutController : BaseController
     public async Task<ActionResult<Workout>> GetUserWorkoutById(int id)
     {
 
-        var workout = await _workoutService.GetWorkoutByIdAsync(id, CurrentUserId);
+        var workout = await _workoutService.GetUserWorkoutByIdAsync(id, CurrentUserId);
 
         if (workout == null) return NotFound();
 

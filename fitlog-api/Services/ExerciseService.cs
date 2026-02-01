@@ -12,15 +12,21 @@ public class ExerciseService : IExerciseService
         _context = context;
     }
 
-    public async Task<IEnumerable<Exercise>> GetAllExercisesAsync(int userId)
+    public async Task<IEnumerable<ExerciseDetailsDto>> GetAllExercisesAsync(int userId)
     {
         return await _context.Exercises
             .Where(e => e.UserId == null || e.UserId == userId)
             .OrderBy(e => e.Name)
+            .Select(e => new ExerciseDetailsDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                MuscleGroup = e.MuscleGroup
+            })
             .ToListAsync();
     }
 
-    public async Task<Exercise> CreateCustomExerciseAsync(CreateExerciseDto dto, int userId)
+    public async Task<ExerciseDetailsDto> CreateCustomExerciseAsync(CreateExerciseDto dto, int userId)
     {
         //we don't check the globals here to allow him to create his own “Supino” if he wants to write something different
         if (await _context.Exercises.AnyAsync(e => e.UserId == userId && e.Name == dto.Name))
@@ -38,7 +44,12 @@ public class ExerciseService : IExerciseService
         _context.Exercises.Add(exercise);
         await _context.SaveChangesAsync();
 
-        return exercise;
+        return new ExerciseDetailsDto
+        {
+            Id = exercise.Id,
+            Name = exercise.Name,
+            MuscleGroup = exercise.MuscleGroup
+        };
     }
 
     public async Task<bool> DeleteCustomExerciseAsync(int id, int userId)

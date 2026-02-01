@@ -4,7 +4,7 @@ namespace FitLogApp.api.Services;
 
 public interface IWorkoutService
 {
-    Task<IEnumerable<Workout>> GetAllWorkoutsByUserIdAsync(int userId);
-    Task<WorkoutDetailsDto?> GetWorkoutByIdAsync(int id, int userId);
-    Task<Workout> CreateWorkoutAsync(CreateWorkoutDto dto, int userId);
+    Task<IEnumerable<WorkoutDetailsDto>> GetAllWorkoutsByUserIdAsync(int userId);
+    Task<WorkoutDetailsDto?> GetUserWorkoutByIdAsync(int id, int userId);
+    Task<WorkoutDetailsDto> CreateWorkoutAsync(CreateWorkoutDto dto, int userId);
 }
