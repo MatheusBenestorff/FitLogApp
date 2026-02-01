@@ -14,17 +14,36 @@ public class UserService : IUserService
         _tokenService = tokenService;
     }
 
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<UserDetailsDto>> GetAllUsersAsync()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Users
+            .Select(u => new UserDetailsDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                Gender = u.Gender,
+                Birthday = u.Birthday
+            })
+            .ToListAsync();
     }
 
-    public async Task<User?> GetUserByIdAsync(int id)
+    public async Task<UserDetailsDto?> GetUserByIdAsync(int id)
     {
-        return await _context.Users.FindAsync(id);
+        return await _context.Users
+            .Where(u => u.Id == id)
+            .Select(u => new UserDetailsDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                Gender = u.Gender,
+                Birthday = u.Birthday
+            })
+            .FirstOrDefaultAsync();
     }
 
-    public async Task<User> CreateUserAsync(CreateUserDto create)
+    public async Task<UserDetailsDto> CreateUserAsync(CreateUserDto create)
     {
         if (await _context.Users.AnyAsync(u => u.Email == create.Email))
         {
@@ -43,10 +62,17 @@ public class UserService : IUserService
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return user;
+        return new UserDetailsDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            Gender = user.Gender,
+            Birthday = user.Birthday
+        };
     }
 
-    public async Task<User?> UpdateUserAsync(int id, UpdateUserDto update)
+    public async Task<UserDetailsDto?> UpdateUserAsync(int id, UpdateUserDto update)
     {
         var existingUser = await _context.Users.FindAsync(id);
         if (existingUser == null) return null;
@@ -64,10 +90,19 @@ public class UserService : IUserService
         }
 
         if (update.Gender != null) existingUser.Gender = update.Gender;
-        if (update.Birthday.HasValue) existingUser.Birthday = update.Birthday.Value;
+        if (update.Birthday.HasValue)
+            existingUser.Birthday = DateTime.SpecifyKind(update.Birthday.Value, DateTimeKind.Utc);
 
         await _context.SaveChangesAsync();
-        return existingUser;
+
+        return new UserDetailsDto
+        {
+            Id = existingUser.Id,
+            Name = existingUser.Name,
+            Email = existingUser.Email,
+            Gender = existingUser.Gender,
+            Birthday = existingUser.Birthday
+        };
     }
 
     public async Task<bool> DeleteUserAsync(int id)
