@@ -89,4 +89,53 @@ public class WorkoutService : IWorkoutService
             }).ToList()
         };
     }
+
+    public async Task<WorkoutDetailsDto?> UpdateWorkoutAsync(int id, UpdateWorkoutDto dto, int userId)
+    {
+        var workout = await _context.Workouts
+            .Include(w => w.Exercises)
+            .FirstOrDefaultAsync(w => w.Id == id && w.UserId == userId);
+
+        if (workout == null) return null;
+
+        if (!string.IsNullOrEmpty(dto.Name) && dto.Name != workout.Name)
+        {
+            bool nameExists = await _context.Workouts
+                .AnyAsync(w => w.UserId == userId && w.Name == dto.Name && w.Id != id);
+
+            if (nameExists)
+                throw new InvalidOperationException("You already have a workout with this name.");
+
+            workout.Name = dto.Name;
+        }
+
+        if (dto.ExerciseIds != null)
+        {
+            workout.Exercises.Clear();
+
+            if (dto.ExerciseIds.Any())
+            {
+                var exercisesToAdd = await _context.Exercises
+                    .Where(e => dto.ExerciseIds.Contains(e.Id))
+                    .ToListAsync();
+
+                workout.Exercises.AddRange(exercisesToAdd);
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        return new WorkoutDetailsDto
+        {
+            Id = workout.Id,
+            Name = workout.Name,
+            UserId = workout.UserId,
+            Exercises = workout.Exercises.Select(e => new ExerciseDetailsDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                MuscleGroup = e.MuscleGroup
+            }).ToList()
+        };
+    }
 }

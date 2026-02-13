@@ -50,19 +50,20 @@ public class WorkoutController : BaseController
         }
     }
 
-    [HttpPut]
-    public async Task<ActionResult<Workout>> UpdateWorkout([FromBody] UpdateWorkoutDto workoutDto)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateWorkout(int id, UpdateWorkoutDto dto)
     {
         try
         {
-            var workout = await _workoutService.UpdateWorkoutAsync(workoutDto, CurrentUserId);
+            var result = await _workoutService.UpdateWorkoutAsync(id, dto, CurrentUserId);
 
-            return Ok(workout);
+            if (result == null) return NotFound("Workout not found");
 
+            return Ok(result);
         }
         catch (InvalidOperationException ex)
         {
-            return Conflict(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
