@@ -50,4 +50,20 @@ public class WorkoutController : BaseController
         }
     }
 
+    [HttpPut]
+    public async Task<ActionResult<Workout>> UpdateWorkout([FromBody] UpdateWorkoutDto workoutDto)
+    {
+        try
+        {
+            var workout = await _workoutService.UpdateWorkoutAsync(workoutDto, CurrentUserId);
+
+            return Ok(workout);
+
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+
 }
