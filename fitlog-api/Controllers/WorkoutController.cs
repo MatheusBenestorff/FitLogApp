@@ -67,4 +67,18 @@ public class WorkoutController : BaseController
         }
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+
+        var deleted = await _workoutService.DeleteWorkoutAsync(id, CurrentUserId);
+
+        if (!deleted)
+        {
+            return NotFound("Workout not found");
+        }
+
+        return NoContent();
+    }
+
 }

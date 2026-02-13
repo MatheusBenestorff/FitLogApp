@@ -138,4 +138,21 @@ public class WorkoutService : IWorkoutService
             }).ToList()
         };
     }
+
+    public async Task<bool> DeleteWorkoutAsync(int id, int userId)
+    {
+        var workout = await _context.Workouts
+            .FirstOrDefaultAsync(w => w.Id == id && w.UserId == userId);
+
+        if (workout == null)
+        {
+            return false;
+        }
+
+        _context.Workouts.Remove(workout);
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
 }
