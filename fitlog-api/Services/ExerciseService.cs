@@ -52,6 +52,35 @@ public class ExerciseService : IExerciseService
         };
     }
 
+    public async Task<ExerciseDetailsDto?> UpdateCustomExerciseAsync(int id, UpdateExerciseDto dto, int userId)
+    {
+        var exercise = await _context.Exercises.FirstOrDefaultAsync(e => e.UserId == userId && e.Name == dto.Name);
+
+        if (exercise == null) return null;
+
+        if (!string.IsNullOrEmpty(dto.Name) && dto.Name != exercise.Name)
+        {
+            bool nameExists = await _context.Exercises
+                .AnyAsync(w => w.UserId == userId && w.Name == dto.Name && w.Id != id);
+
+            if (nameExists)
+                throw new InvalidOperationException("You already have a exercise with this name.");
+
+            exercise.Name = dto.Name;
+            exercise.MuscleGroup = dto.MuscleGroup;
+        }
+
+
+        await _context.SaveChangesAsync();
+
+        return new ExerciseDetailsDto
+        {
+            Id = exercise.Id,
+            Name = exercise.Name,
+            MuscleGroup = exercise.MuscleGroup
+        };
+    }
+
     public async Task<bool> DeleteCustomExerciseAsync(int id, int userId)
     {
         //Ensures that the user can only delete their own exercise, not those belonging to the system or others.

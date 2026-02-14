@@ -35,11 +35,11 @@ public class ExerciseController : BaseController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateExercise(int id, UpdateExerciseDto dto)
+    public async Task<IActionResult> UpdateCustomExercise(int id, UpdateExerciseDto dto)
     {
         try
         {
-            var result = await _exerciseService.UpdateExerciseAsync(id, dto, CurrentUserId);
+            var result = await _exerciseService.UpdateCustomExerciseAsync(id, dto, CurrentUserId);
 
             if (result == null) return NotFound("Exercise not found");
 
