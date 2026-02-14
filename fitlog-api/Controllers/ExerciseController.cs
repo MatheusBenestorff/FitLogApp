@@ -34,6 +34,23 @@ public class ExerciseController : BaseController
         }
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateExercise(int id, UpdateExerciseDto dto)
+    {
+        try
+        {
+            var result = await _exerciseService.UpdateExerciseAsync(id, dto, CurrentUserId);
+
+            if (result == null) return NotFound("Exercise not found");
+
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCustomExercise(int id)
     {

@@ -68,7 +68,7 @@ public class WorkoutController : BaseController
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteWorkout(int id)
     {
 
         var deleted = await _workoutService.DeleteWorkoutAsync(id, CurrentUserId);
