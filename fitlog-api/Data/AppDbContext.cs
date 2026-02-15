@@ -13,6 +13,6 @@ public class AppDbContext : DbContext
     public DbSet<Exercise> Exercises { get; set; }
     public DbSet<WorkoutSession> WorkoutSessions { get; set; }
     public DbSet<SessionExercise> SessionExercises { get; set; }
-    public DbSet<Set> Sets { get; set; }
+    public DbSet<SessionSet> SessionSets { get; set; }
 
 }
