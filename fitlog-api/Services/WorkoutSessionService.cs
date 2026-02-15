@@ -135,6 +135,7 @@ public class WorkoutSessionService : IWorkoutSessionService
                     ExerciseId = e.ExerciseId,
                     ExerciseNameSnapshot = e.ExerciseNameSnapshot,
                     MuscleGroupSnapshot = e.MuscleGroupSnapshot,
+                    OrderIndex = e.OrderIndex,
                     Sets = e.Sets
                         .OrderBy(s => s.OrderIndex)
                         .Select(s => new SessionSetDto

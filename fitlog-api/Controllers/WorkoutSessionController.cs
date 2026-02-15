@@ -1,0 +1,45 @@
+using FitLogApp.api.Data;
+using FitLogApp.api.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace FitLogApp.api.Controllers;
+
+public class WorkoutSessionController : BaseController
+{
+    private readonly IWorkoutSessionService _workoutsessionService;
+
+    public WorkoutSessionController(IWorkoutSessionService workoutsessionService)
+    {
+        _workoutsessionService = workoutsessionService;
+    }
+
+    [HttpPost("start")]
+    public async Task<IActionResult> StartUserWorkoutSession([FromBody] StartSessionDto dto)
+    {
+        try
+        {
+            var workoutsession = await _workoutsessionService.StartUserWorkoutSessionAsync(dto, CurrentUserId);
+
+            return CreatedAtAction(nameof(GetSessionById), new { id = workoutsession.Id }, workoutsession);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Erro ao iniciar sessão: {ex.Message}");
+        }
+    }
+
+
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetSessionById(int id)
+    {
+        var session = await _workoutsessionService.GetUserWorkoutSessionByIdAsync(id, CurrentUserId);
+
+        if (session == null)
+            return NotFound("Session not found");
+
+        return Ok(session);
+    }
+
+}
