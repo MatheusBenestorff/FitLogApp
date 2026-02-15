@@ -6,6 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
 import logoImg from "../assets/logo.png";
+import dashboardImg from "../assets/hometeste.png";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -33,63 +34,98 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-navy-900 p-6">
-      <div className="w-full flex flex-col items-center max-w-[320px]">
-        <img
-          src={logoImg}
-          alt="Logo FitLog"
-          className="w-[296px] h-auto mb-8 object-contain"
-        />
-
-        {error && (
-          <span className="text-red-500 text-sm mb-4 bg-red-100/10 p-2 rounded w-full text-center">
-            {error}
-          </span>
-        )}
-
-        <form
-          onSubmit={handleSubmit}
-          className="w-full flex flex-col items-center"
-        >
-          {/* Email Input */}
-          <div className="w-full max-w-[300px] mt-[18px]">
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="E-mail"
-              required
+    <div className="min-h-screen flex w-full bg-navy-900 text-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 z-10">
+        <div className="w-full max-w-[500px] flex flex-col">
+          {/* Logo */}
+          <div className="flex justify-center mb-8">
+            <img
+              src={logoImg}
+              alt="Logo FitLog"
+              className="h-12 object-contain"
             />
           </div>
 
-          {/* Password Input */}
-          <div className="w-full max-w-[300px] mt-[16px]">
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Senha"
-              required
-            />
-          </div>
+          <h1 className="text-3xl font-bold text-white mb-2 text-center">
+            Log In
+          </h1>
 
-          {/* Link "Não possui conta?" (TextView) */}
-          <div className="w-full max-w-[300px] mt-[16px] flex justify-start">
-            <Link
-              to="/register"
-              className="text-brand-orange text-sm hover:underline"
-            >
-              Não possui conta? Cadastre-se aqui!
-            </Link>
-          </div>
+          {error && (
+            <span className="text-red-400 text-sm mb-4 bg-red-500/10 border border-red-500/20 p-3 rounded w-full text-center">
+              {error}
+            </span>
+          )}
 
-          {/* Button (LoginButton) */}
-          <div className="w-full max-w-[300px] mt-[24px]">
+          <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+            {/* Email Input */}
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2 pl-1">
+                Email
+              </label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="exemplo@email.com"
+                required
+                className="bg-navy-800 border-navy-700 text-white placeholder-gray-500 focus:border-brand-orange"
+              />
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2 pl-1">
+                Password
+              </label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="bg-navy-800 border-navy-700 text-white placeholder-gray-500 focus:border-brand-orange"
+              />
+            </div>
+
+            {/* Forgot Password */}
+            <div className="mt-8 text-center">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-gray-400 hover:text-brand-orange transition-colors"
+              >
+                ForgotPassword
+              </Link>
+            </div>
+
+            {/* Button */}
             <Button type="submit" isLoading={loading}>
-              Entrar
+              Login
             </Button>
+          </form>
+
+          {/* Footer Link */}
+          <div className="mt-8 text-center text-sm text-gray-400">
+            <p>
+              New to FitLog?{" "}
+              <Link
+                to="/register"
+                className="text-brand-orange font-bold hover:underline ml-1"
+              >
+                Sign Up
+              </Link>
+            </p>
           </div>
-        </form>
+        </div>
+      </div>
+
+      <div className="hidden lg:flex w-1/2 bg-[#0B1121] relative items-center justify-center overflow-hidden">
+        <div className="absolute w-[500px] h-[500px] bg-brand-orange/10 rounded-full blur-[100px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+
+        <img
+          src={dashboardImg}
+          alt="App Dashboard Preview"
+          className="relative z-10 max-w-[85%] max-h-[85%] object-contain shadow-2xl rounded-xl border border-white/5"
+        />
       </div>
     </div>
   );
