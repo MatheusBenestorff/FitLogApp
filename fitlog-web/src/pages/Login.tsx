@@ -64,11 +64,10 @@ export const Login: React.FC = () => {
               </label>
               <Input
                 type="email"
+                placeholder="exemplo@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="exemplo@email.com"
-                required
-                className="bg-navy-800 border-navy-700 text-white placeholder-gray-500 focus:border-brand-orange"
+                error={error ? "Email inválido" : undefined}
               />
             </div>
 
