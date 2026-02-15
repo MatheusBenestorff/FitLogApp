@@ -29,7 +29,27 @@ public class WorkoutSessionController : BaseController
         }
     }
 
+    [HttpPost("{id}/finish")]
+    public async Task<IActionResult> FinishUserWorkoutSession(int id, [FromBody] FinishSessionDto dto)
+    {
+        try
+        {
+            var result = await _workoutsessionService.FinishUserWorkoutSessionAsync(id, dto, CurrentUserId);
 
+            if (result == null)
+                return NotFound("Session not found or does not belong to this user.");
+
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro interno: {ex.Message}");
+        }
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSessionById(int id)
