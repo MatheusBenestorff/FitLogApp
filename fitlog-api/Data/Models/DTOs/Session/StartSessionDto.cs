@@ -1,4 +1,4 @@
-namespace FitLogApp.api.Dtos.Session;
+namespace FitLogApp.api.Data;
 
 public class StartSessionDto
 {

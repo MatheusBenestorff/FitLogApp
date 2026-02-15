@@ -47,6 +47,8 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
+builder.Services.AddScoped<IWorkoutSessionService, WorkoutSessionService>();
+
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
