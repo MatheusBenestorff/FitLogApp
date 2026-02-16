@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { exerciseService } from "../services/exerciseService";
 import type { Exercise } from "../types/exercise";
+import { CreateExerciseModal } from "../components/CreateExerciseModal";
 import { 
   Search, 
   Dumbbell, 
@@ -105,7 +106,10 @@ export const Exercises: React.FC = () => {
         <div className="p-4 border-b border-gray-100">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-gray-800">Library</h2>
-            <button className="flex items-center gap-1 text-sm text-blue-600 font-medium hover:underline">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-1 text-sm text-blue-600 font-medium hover:underline"
+            >
               <Plus size={16} /> Custom Exercise
             </button>
           </div>
@@ -179,6 +183,14 @@ export const Exercises: React.FC = () => {
           )}
         </div>
       </aside>
+
+      <CreateExerciseModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={() => {
+           fetchExercises(); 
+        }}
+      />
 
     </div>
   );
