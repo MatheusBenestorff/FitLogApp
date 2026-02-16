@@ -61,7 +61,7 @@ export const Sidebar: React.FC = () => {
       {/* 2. Navegação Principal */}
       <nav className="flex-1 px-4 py-4 overflow-y-auto">
         <NavItem to="/dashboard" icon={Home} label="Feed" />
-        <NavItem to="/routines" icon={ClipboardList} label="Routines" />
+        <NavItem to="/workouts" icon={ClipboardList} label="Workouts" />
         <NavItem to="/exercises" icon={Dumbbell} label="Exercises" />
         <NavItem to="/profile" icon={User} label="Profile" />
         <NavItem to="/settings" icon={Settings} label="Settings" />

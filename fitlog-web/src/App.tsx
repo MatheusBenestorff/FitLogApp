@@ -2,11 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { MainLayout } from "./layouts/MainLayout"; // Importe o layout
+import { MainLayout } from "./layouts/MainLayout"; 
+import { Workouts } from "./pages/Workouts";
 import type { JSX } from "react";
 
 const Dashboard = () => <h1 className="text-2xl font-bold text-gray-800">Feed Principal</h1>;
-const Routines = () => <h1 className="text-2xl font-bold text-gray-800">Minhas Rotinas</h1>;
 const Exercises = () => <h1 className="text-2xl font-bold text-gray-800">Lista de Exercícios</h1>;
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
@@ -23,7 +23,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* --- ROTAS PROTEGIDAS (COM SIDEBAR) --- */}
+          {/* --- ROTAS PROTEGIDAS --- */}
           <Route
             element={
               <PrivateRoute>
@@ -32,7 +32,7 @@ function App() {
             }
           >
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/routines" element={<Routines />} />
+            <Route path="/workouts" element={<Workouts />} />
             <Route path="/exercises" element={<Exercises />} />
           </Route>
 
