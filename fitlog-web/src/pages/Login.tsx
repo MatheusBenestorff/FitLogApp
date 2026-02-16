@@ -92,7 +92,7 @@ export const Login: React.FC = () => {
                 to="/forgot-password"
                 className="text-sm text-gray-400 hover:text-brand-orange transition-colors"
               >
-                ForgotPassword
+                Forgot Password
               </Link>
             </div>
 
