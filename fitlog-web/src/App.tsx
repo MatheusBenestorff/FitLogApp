@@ -4,6 +4,7 @@ import { Register } from "./pages/Register";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { MainLayout } from "./layouts/MainLayout"; 
 import { Workouts } from "./pages/Workouts";
+import { CreateWorkout } from "./pages/CreateWorkout";
 import type { JSX } from "react";
 
 const Dashboard = () => <h1 className="text-2xl font-bold text-gray-800">Feed Principal</h1>;
@@ -34,6 +35,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/workouts" element={<Workouts />} />
             <Route path="/exercises" element={<Exercises />} />
+            <Route path="/workouts/new" element={<CreateWorkout />} />
           </Route>
 
           {/* Rota 404 - Redireciona para login ou dashboard */}
