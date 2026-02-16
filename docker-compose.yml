@@ -1,6 +1,6 @@
 services:
   fitlog-db:
-    image: postgres
+    image: postgres:16-alpine
     restart: always
     environment:
       POSTGRES_DB: fitlog_db
@@ -13,6 +13,7 @@ services:
 
   fitlog-api:
     build: ./fitlog-api
+    restart: always
     environment:
       #Adicionar quando for aplicar novas migrations no banco
       # - ASPNETCORE_ENVIRONMENT=Development

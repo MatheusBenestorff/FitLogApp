@@ -54,7 +54,7 @@ public class ExerciseService : IExerciseService
 
     public async Task<ExerciseDetailsDto?> UpdateCustomExerciseAsync(int id, UpdateExerciseDto dto, int userId)
     {
-        var exercise = await _context.Exercises.FirstOrDefaultAsync(e => e.UserId == userId && e.Name == dto.Name);
+        var exercise = await _context.Exercises.FirstOrDefaultAsync(e => e.UserId == userId && e.Id == id);
 
         if (exercise == null) return null;
 
@@ -67,9 +67,8 @@ public class ExerciseService : IExerciseService
                 throw new InvalidOperationException("You already have a exercise with this name.");
 
             exercise.Name = dto.Name;
-            exercise.MuscleGroup = dto.MuscleGroup;
         }
-
+        exercise.MuscleGroup = dto.MuscleGroup;
 
         await _context.SaveChangesAsync();
 
