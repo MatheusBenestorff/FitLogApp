@@ -1,8 +1,4 @@
-export interface Exercise {
-    id: number;
-    name: string;
-    muscleGroup: string;
-  }
+import type { Exercise } from "../types/exercise";
   
   export interface Workout {
     id: number;
