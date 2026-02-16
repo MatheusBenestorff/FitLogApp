@@ -76,8 +76,8 @@ export const CreateWorkout: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         
         {/* Header */}
@@ -89,14 +89,14 @@ export const CreateWorkout: React.FC = () => {
             >
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-xl font-bold text-gray-800">Create Routine</h1>
+            <h1 className="text-xl font-bold text-gray-800">Create Workout</h1>
           </div>
           <button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors disabled:opacity-50"
           >
-            {isSaving ? "Saving..." : "Save Routine"}
+            {isSaving ? "Saving..." : "Save Workout"}
           </button>
         </header>
 
@@ -107,7 +107,7 @@ export const CreateWorkout: React.FC = () => {
             {/* Input Nome */}
             <div className="mb-8">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Routine Title
+                Workout Name
               </label>
               <input
                 type="text"
@@ -127,7 +127,7 @@ export const CreateWorkout: React.FC = () => {
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">No Exercises</h3>
                   <p className="text-gray-500 mt-1">
-                    So far, you haven't added any exercises to this routine.
+                    So far, you haven't added any exercises to this workout.
                   </p>
                 </div>
               ) : (

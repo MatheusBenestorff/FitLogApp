@@ -4,11 +4,11 @@ import { Register } from "./pages/Register";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { MainLayout } from "./layouts/MainLayout"; 
 import { Workouts } from "./pages/Workouts";
+import { Exercises } from "./pages/Exercises";
 import { CreateWorkout } from "./pages/CreateWorkout";
 import type { JSX } from "react";
 
 const Dashboard = () => <h1 className="text-2xl font-bold text-gray-800">Feed Principal</h1>;
-const Exercises = () => <h1 className="text-2xl font-bold text-gray-800">Lista de Exercícios</h1>;
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuth();
