@@ -16,7 +16,7 @@ public class WorkoutSessionService : IWorkoutSessionService
     {
         var sessions = await _context.WorkoutSessions
             .AsNoTracking() 
-            .Where(s => s.UserId == userId) 
+            .Where(s => s.UserId == userId && s.EndTime != null) 
             .Include(s => s.SessionExercises)
                 .ThenInclude(se => se.Sets) 
             .OrderByDescending(s => s.StartTime)
