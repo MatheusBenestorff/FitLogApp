@@ -12,10 +12,10 @@ public class ExerciseService : IExerciseService
         _context = context;
     }
 
-    public async Task<IEnumerable<ExerciseDetailsDto>> GetAllExercisesAsync(int userId)
+    public async Task<IEnumerable<ExerciseDetailsDto>> GetAllUserExercisesAsync(int userId)
     {
         return await _context.Exercises
-            .Where(e => e.UserId == null || e.UserId == userId)
+            .Where(e => e.UserId == userId)
             .OrderBy(e => e.Name)
             .Select(e => new ExerciseDetailsDto
             {
@@ -24,6 +24,20 @@ public class ExerciseService : IExerciseService
                 MuscleGroup = e.MuscleGroup
             })
             .ToListAsync();
+    }
+
+    public async Task<ExerciseDetailsDto?> GetUserExerciseByIdAsync(int id, int userId)
+    {
+        return await _context.Exercises
+            .Where(e => e.Id == id && e.UserId == userId)
+            .Select(e => new ExerciseDetailsDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                MuscleGroup = e.MuscleGroup
+
+            })
+            .FirstOrDefaultAsync();
     }
 
     public async Task<ExerciseDetailsDto> CreateCustomExerciseAsync(CreateExerciseDto dto, int userId)

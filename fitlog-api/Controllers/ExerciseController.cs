@@ -16,8 +16,19 @@ public class ExerciseController : BaseController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Exercise>>> GetAllExercises()
     {
-        var exercises = await _exerciseService.GetAllExercisesAsync(CurrentUserId);
+        var exercises = await _exerciseService.GetAllUserExercisesAsync(CurrentUserId);
         return Ok(exercises);
+    }
+
+    [HttpGet("{id}", Name = "GetExerciseById")]
+    public async Task<ActionResult<Exercise>> GetExerciseById(int id)
+    {
+
+        var exercise = await _exerciseService.GetUserExerciseByIdAsync(id, CurrentUserId);
+
+        if (exercise == null) return NotFound();
+
+        return Ok(exercise);
     }
 
     [HttpPost]
