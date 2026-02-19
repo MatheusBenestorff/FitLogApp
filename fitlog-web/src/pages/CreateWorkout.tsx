@@ -1,59 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { exerciseService } from "../services/exerciseService";
 import { workoutService } from "../services/workoutService";
-import type { Exercise } from "../types/exercise";
-import { CreateExerciseModal } from "../components/CreateExerciseModal";
+import type { Exercise } from "../types/exercise"; // Ajuste o caminho se necessário
+import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { 
   ArrowLeft, 
-  Search, 
-  PlusCircle, 
   Dumbbell, 
-  Trash2, 
-  Filter, 
-  Plus
+  Trash2
 } from "lucide-react";
 
 export const CreateWorkout: React.FC = () => {
   const navigate = useNavigate();
 
-  const [availableExercises, setAvailableExercises] = useState<Exercise[]>([]);
   const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
   const [workoutName, setWorkoutName] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-  
-
-  useEffect(() => {
-    loadExercises();
-  }, []);
-
-  const loadExercises = async () => {
-    try {
-      const data = await exerciseService.getAll();
-      setAvailableExercises(data);
-    } catch (error) {
-      console.error("Erro ao carregar exercícios", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
 
-  const filteredExercises = availableExercises.filter(ex => 
-    ex.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    ex.muscleGroup.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleAddExercise = (exercise: Exercise) => {
+  const handleAddExerciseFromLibrary = (exercise: Exercise) => {
     if (selectedExercises.find(e => e.id === exercise.id)) return;
-    setSelectedExercises([...selectedExercises, exercise]);
-  };
+    setSelectedExercises(prev => [...prev, exercise]);
+};
 
   const handleRemoveExercise = (indexToRemove: number) => {
-    setSelectedExercises(selectedExercises.filter((_, index) => index !== indexToRemove));
+    setSelectedExercises(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
   const handleSave = async () => {
@@ -81,12 +51,14 @@ export const CreateWorkout: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    // Container Principal 
+    <div className="flex h-[calc(100vh-6rem)] gap-6">
 
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      {/* --- COLUNA ESQUERDA (Editor do Treino) --- */}
+      <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
         
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        {/* Header do Editor */}
+        <header className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => navigate(-1)} 
@@ -99,59 +71,76 @@ export const CreateWorkout: React.FC = () => {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors disabled:opacity-50"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors disabled:opacity-50 text-sm"
           >
             {isSaving ? "Saving..." : "Save Workout"}
           </button>
         </header>
 
-        {/* Conteúdo Principal */}
+        {/* Conteúdo Scrollável */}
         <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-3xl mx-auto">
             
             {/* Input Nome */}
             <div className="mb-8">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">
                 Workout Name
               </label>
               <input
                 type="text"
-                placeholder="Ex: Treino de Peito A"
+                placeholder="Ex: Chest Day - Hypertrophy"
                 value={workoutName}
                 onChange={(e) => setWorkoutName(e.target.value)}
-                className="w-full text-lg p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+                className="w-full text-lg p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                autoFocus
               />
             </div>
 
             {/* Lista de Exercícios Selecionados */}
             <div className="space-y-4">
+              <div className="flex justify-between items-center mb-2 px-1">
+                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                    Exercises ({selectedExercises.length})
+                 </h3>
+              </div>
+
               {selectedExercises.length === 0 ? (
-                <div className="bg-white border-2 border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                  <div className="bg-gray-50 p-4 rounded-full mb-4">
-                    <Dumbbell size={48} className="text-gray-300" />
+                // Empty State
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center justify-center text-center bg-gray-50/50">
+                  <div className="bg-white p-4 rounded-full mb-4 shadow-sm border border-gray-100">
+                    <Dumbbell size={32} className="text-gray-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">No Exercises</h3>
-                  <p className="text-gray-500 mt-1">
-                    So far, you haven't added any exercises to this workout.
+                  <h3 className="text-base font-semibold text-gray-900">No exercises added</h3>
+                  <p className="text-gray-500 text-sm mt-1 max-w-xs">
+                    Select exercises from the library on the right to build your routine.
                   </p>
                 </div>
               ) : (
+                // Lista de Itens
                 selectedExercises.map((ex, index) => (
-                  <div key={`${ex.id}-${index}`} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center group">
+                  <div key={`${ex.id}-${index}`} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center group hover:border-blue-300 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">
+                      {/* Avatar */}
+                      <div className="bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm border border-blue-100">
                         {ex.name.charAt(0)}
                       </div>
+                      
+                      {/* Info */}
                       <div>
                         <h4 className="font-semibold text-gray-800">{ex.name}</h4>
-                        <span className="text-xs text-gray-500 uppercase">{ex.muscleGroup}</span>
+                        <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full font-medium">
+                            {ex.muscleGroup}
+                        </span>
                       </div>
                     </div>
+
+                    {/* Ações */}
                     <button 
                       onClick={() => handleRemoveExercise(index)}
-                      className="text-gray-400 hover:text-red-500 p-2 transition-colors"
+                      className="text-gray-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                      title="Remove exercise"
                     >
-                      <Trash2 size={20} />
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 ))
@@ -162,85 +151,9 @@ export const CreateWorkout: React.FC = () => {
         </div>
       </div>
 
-      {/* --- COLUNA DIREITA --- */}
-      <aside className="w-96 bg-white border-l border-gray-200 flex flex-col h-full shadow-lg z-10">
-        
-        {/* Library Header */}
-        <div className="p-4 border-b border-gray-100">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="font-bold text-gray-800">Library</h2>
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-1 text-sm text-blue-600 font-medium hover:underline"
-            >
-              <Plus size={16} /> Custom Exercise
-            </button>
-          </div>
-
-          {/* Filtros Visuais (Dropdowns placeholder) */}
-          <div className="flex gap-2 mb-3">
-             <button className="flex-1 flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-100">
-               All Equipment <Filter size={14} />
-             </button>
-             <button className="flex-1 flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600 hover:bg-gray-100">
-               All Muscles <Filter size={14} />
-             </button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search Exercises" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-100 text-sm text-gray-700 rounded-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
-        </div>
-
-        {/* Lista de Exercícios*/}
-        <div className="flex-1 overflow-y-auto p-2">
-          {isLoading ? (
-            <div className="text-center p-4 text-gray-500">Loading...</div>
-          ) : (
-            <div className="space-y-1">
-              {filteredExercises.map((exercise) => (
-                <div 
-                  key={exercise.id} 
-                  className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg group transition-colors cursor-pointer"
-                  onClick={() => handleAddExercise(exercise)}
-                >
-                  <div className="flex items-center gap-3">
-                    {/* Placeholder Avatar Image */}
-                    <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                       <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                          <Dumbbell size={18} />
-                       </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-gray-800">{exercise.name}</span>
-                      <span className="text-xs text-gray-500">{exercise.muscleGroup}</span>
-                    </div>
-                  </div>
-                  
-                  <button className="text-blue-500 hover:text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <PlusCircle size={24} fill="currentColor" className="text-white bg-blue-500 rounded-full" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </aside>
-
-      <CreateExerciseModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSuccess={() => {
-          loadExercises(); 
-        }}
+      <ExerciseLibrary 
+        onSelectExercise={handleAddExerciseFromLibrary} 
+        className="w-96 hidden lg:flex" 
       />
 
     </div>

@@ -5,7 +5,7 @@ import { CreateExerciseModal } from "./CreateExerciseModal";
 import { Search, Filter, Plus, Loader2 } from "lucide-react";
 
 interface ExerciseLibraryProps {
-  onSelectExercise: (exerciseId: number) => void;
+  onSelectExercise: (exercise: Exercise) => void;
   selectedExerciseId?: number | null;
   className?: string;
 }
@@ -92,8 +92,8 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
               return (
                 <div 
                   key={exercise.id} 
-                  onClick={() => onSelectExercise(exercise.id)}
-                  className={`
+                  onClick={() =>
+                     onSelectExercise(exercise)}                  className={`
                     flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all
                     ${isSelected 
                       ? "bg-blue-50 border border-blue-100 ring-1 ring-blue-200" 
