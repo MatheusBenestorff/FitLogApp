@@ -44,7 +44,7 @@ export const Sidebar: React.FC = () => {
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col sticky top-0 left-0">
       
-      {/* 1. Header da Sidebar (Logo + Busca) */}
+      {/* Header da Sidebar (Logo + Busca) */}
       <div className="p-6 pb-2">
         <img src={logoImg} alt="FitLog" className="h-8 mb-6 object-contain" />
         
@@ -58,7 +58,7 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Navegação Principal */}
+      {/* Navegação Principal */}
       <nav className="flex-1 px-4 py-4 overflow-y-auto">
         <NavItem to="/dashboard" icon={Home} label="Feed" />
         <NavItem to="/workouts" icon={ClipboardList} label="Workouts" />
@@ -67,7 +67,7 @@ export const Sidebar: React.FC = () => {
         <NavItem to="/settings" icon={Settings} label="Settings" />
       </nav>
 
-      {/* 3. Rodapé da Sidebar (Usuário) */}
+      {/* Rodapé da Sidebar (Usuário) */}
       <div className="p-4 border-t border-gray-100">
         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group">
           <img 

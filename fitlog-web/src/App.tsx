@@ -8,6 +8,8 @@ import { Exercises } from "./pages/Exercises";
 import { CreateWorkout } from "./pages/CreateWorkout";
 import { WorkoutDetails } from "./pages/WorkoutDetails";
 import { Dashboard } from "./pages/Dashboard";
+import { Profile } from "./pages/Profile";
+
 
 import type { JSX } from "react";
 
@@ -38,6 +40,7 @@ function App() {
             <Route path="/workouts/:id" element={<WorkoutDetails />} /> 
             <Route path="/workouts/new" element={<CreateWorkout />} />
             <Route path="/exercises" element={<Exercises />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           {/* Rota 404 - Redireciona para login ou dashboard */}
