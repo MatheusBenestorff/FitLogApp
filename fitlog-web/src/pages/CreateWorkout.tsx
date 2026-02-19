@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { exerciseService } from "../services/exerciseService";
 import { workoutService } from "../services/workoutService";
 import type { Exercise } from "../types/exercise";
+import { CreateExerciseModal } from "../components/CreateExerciseModal";
 import { 
   ArrowLeft, 
   Search, 
   PlusCircle, 
   Dumbbell, 
   Trash2, 
-  Filter 
+  Filter, 
+  Plus
 } from "lucide-react";
 
 export const CreateWorkout: React.FC = () => {
@@ -21,6 +23,8 @@ export const CreateWorkout: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  
 
   useEffect(() => {
     loadExercises();
@@ -36,6 +40,7 @@ export const CreateWorkout: React.FC = () => {
       setIsLoading(false);
     }
   };
+
 
   const filteredExercises = availableExercises.filter(ex => 
     ex.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -164,8 +169,11 @@ export const CreateWorkout: React.FC = () => {
         <div className="p-4 border-b border-gray-100">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-gray-800">Library</h2>
-            <button className="text-sm text-blue-600 font-medium hover:underline">
-              + Custom Exercise
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-1 text-sm text-blue-600 font-medium hover:underline"
+            >
+              <Plus size={16} /> Custom Exercise
             </button>
           </div>
 
@@ -226,6 +234,14 @@ export const CreateWorkout: React.FC = () => {
           )}
         </div>
       </aside>
+
+      <CreateExerciseModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={() => {
+          loadExercises(); 
+        }}
+      />
 
     </div>
   );
