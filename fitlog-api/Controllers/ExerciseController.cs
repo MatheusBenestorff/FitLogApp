@@ -14,14 +14,14 @@ public class ExerciseController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Exercise>>> GetAllExercises()
+    public async Task<ActionResult<IEnumerable<Exercise>>> GetAllUserExercises()
     {
         var exercises = await _exerciseService.GetAllUserExercisesAsync(CurrentUserId);
         return Ok(exercises);
     }
 
-    [HttpGet("{id}", Name = "GetExerciseById")]
-    public async Task<ActionResult<Exercise>> GetExerciseById(int id)
+    [HttpGet("{id}", Name = "GetUserExerciseById")]
+    public async Task<ActionResult<Exercise>> GetUserExerciseById(int id)
     {
 
         var exercise = await _exerciseService.GetUserExerciseByIdAsync(id, CurrentUserId);
