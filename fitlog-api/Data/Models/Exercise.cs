@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FitLogApp.api.Data;
 
@@ -9,10 +10,18 @@ public class Exercise
     [Required]
     public string Name { get; set; }
 
-    public string MuscleGroup { get; set; }
+    public string Equipment { get; set; }
 
-    public List<Workout> Workouts { get; set; }
+    [Required]
+    public string PrimaryMuscleGroup { get; set; }
+
+    public string SecondaryMuscleGroups { get; set; }
+
+    public string ImageUrl { get; set; }
 
     public int? UserId { get; set; }
 
+    public List<Workout> WorkoutExercises { get; set; }
+
+    public List<SessionExercise> SessionExercises { get; set; }
 }

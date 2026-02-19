@@ -25,7 +25,7 @@ public class WorkoutService : IWorkoutService
                 {
                     Id = e.Id,
                     Name = e.Name,
-                    MuscleGroup = e.MuscleGroup
+                    MuscleGroup = e.PrimaryMuscleGroup
                 }).ToList()
             })
             .ToListAsync();
@@ -44,7 +44,7 @@ public class WorkoutService : IWorkoutService
                 {
                     Id = e.Id,
                     Name = e.Name,
-                    MuscleGroup = e.MuscleGroup
+                    MuscleGroup = e.PrimaryMuscleGroup
                 }).ToList()
             })
             .FirstOrDefaultAsync();
@@ -85,7 +85,7 @@ public class WorkoutService : IWorkoutService
             {
                 Id = e.Id,
                 Name = e.Name,
-                MuscleGroup = e.MuscleGroup
+                MuscleGroup = e.PrimaryMuscleGroup
             }).ToList()
         };
     }
@@ -134,7 +134,7 @@ public class WorkoutService : IWorkoutService
             {
                 Id = e.Id,
                 Name = e.Name,
-                MuscleGroup = e.MuscleGroup
+                MuscleGroup = e.PrimaryMuscleGroup
             }).ToList()
         };
     }

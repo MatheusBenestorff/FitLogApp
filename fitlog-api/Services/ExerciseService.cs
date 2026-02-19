@@ -21,7 +21,7 @@ public class ExerciseService : IExerciseService
             {
                 Id = e.Id,
                 Name = e.Name,
-                MuscleGroup = e.MuscleGroup
+                MuscleGroup = e.PrimaryMuscleGroup
             })
             .ToListAsync();
     }
@@ -34,7 +34,7 @@ public class ExerciseService : IExerciseService
             {
                 Id = e.Id,
                 Name = e.Name,
-                MuscleGroup = e.MuscleGroup
+                MuscleGroup = e.PrimaryMuscleGroup
 
             })
             .FirstOrDefaultAsync();
@@ -51,7 +51,7 @@ public class ExerciseService : IExerciseService
         var exercise = new Exercise
         {
             Name = dto.Name,
-            MuscleGroup = dto.MuscleGroup,
+            PrimaryMuscleGroup = dto.MuscleGroup,
             UserId = userId
         };
 
@@ -62,7 +62,7 @@ public class ExerciseService : IExerciseService
         {
             Id = exercise.Id,
             Name = exercise.Name,
-            MuscleGroup = exercise.MuscleGroup
+            MuscleGroup = exercise.PrimaryMuscleGroup
         };
     }
 
@@ -82,7 +82,7 @@ public class ExerciseService : IExerciseService
 
             exercise.Name = dto.Name;
         }
-        exercise.MuscleGroup = dto.MuscleGroup;
+        exercise.PrimaryMuscleGroup = dto.MuscleGroup;
 
         await _context.SaveChangesAsync();
 
@@ -90,7 +90,7 @@ public class ExerciseService : IExerciseService
         {
             Id = exercise.Id,
             Name = exercise.Name,
-            MuscleGroup = exercise.MuscleGroup
+            MuscleGroup = exercise.PrimaryMuscleGroup
         };
     }
 

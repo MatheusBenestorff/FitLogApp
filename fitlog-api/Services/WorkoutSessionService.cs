@@ -64,7 +64,7 @@ public class WorkoutSessionService : IWorkoutSessionService
                     {
                         ExerciseId = exercise.Id,
                         ExerciseNameSnapshot = exercise.Name,
-                        MuscleGroupSnapshot = exercise.MuscleGroup,
+                        MuscleGroupSnapshot = exercise.PrimaryMuscleGroup,
                         OrderIndex = order++,
                         Sets = new List<SessionSet>()
                     });
@@ -111,7 +111,7 @@ public class WorkoutSessionService : IWorkoutSessionService
                 WorkoutSessionId = session.Id,
                 ExerciseId = originalExercise.Id,
                 ExerciseNameSnapshot = originalExercise.Name,
-                MuscleGroupSnapshot = originalExercise.MuscleGroup,
+                MuscleGroupSnapshot = originalExercise.PrimaryMuscleGroup,
                 OrderIndex = exerciseDto.OrderIndex,
                 Sets = exerciseDto.Sets.Select(s => new SessionSet
                 {
