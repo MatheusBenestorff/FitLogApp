@@ -6,6 +6,7 @@ import { MainLayout } from "./layouts/MainLayout";
 import { Workouts } from "./pages/Workouts";
 import { Exercises } from "./pages/Exercises";
 import { CreateWorkout } from "./pages/CreateWorkout";
+import { WorkoutDetails } from "./pages/WorkoutDetails";
 import type { JSX } from "react";
 
 const Dashboard = () => <h1 className="text-2xl font-bold text-gray-800">Feed Principal</h1>;
@@ -34,8 +35,9 @@ function App() {
           >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/workouts" element={<Workouts />} />
-            <Route path="/exercises" element={<Exercises />} />
+            <Route path="/workouts/:id" element={<WorkoutDetails />} /> 
             <Route path="/workouts/new" element={<CreateWorkout />} />
+            <Route path="/exercises" element={<Exercises />} />
           </Route>
 
           {/* Rota 404 - Redireciona para login ou dashboard */}

@@ -24,7 +24,10 @@ export const Workouts: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (e: React.MouseEvent, id: number) => {
+    e.preventDefault(); 
+    e.stopPropagation(); 
+
     if (confirm("Are you sure you want to delete this workout?")) {
       try {
         await workoutService.delete(id);
@@ -60,9 +63,10 @@ export const Workouts: React.FC = () => {
             </div>
           ) : (
             workouts.map((workout) => (
-              <div
+              <Link
+                to={`/workouts/${workout.id}`}
                 key={workout.id}
-                className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
+                className="block bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow group relative"
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -74,24 +78,26 @@ export const Workouts: React.FC = () => {
                     </p>
                   </div>
                   
-                  {/* Actions Dropdown Trigger (Simplified for now) */}
+                  {/* Actions Dropdown Trigger */}
                   <button 
-                    onClick={() => handleDelete(workout.id)}
-                    className="text-gray-400 hover:text-red-500 p-1"
+                    onClick={(e) => handleDelete(e, workout.id)}
+                    className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-gray-50 transition-colors z-10"
                     title="Delete Workout"
                   >
                     <MoreHorizontal size={20} />
                   </button>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>
       </div>
 
+      {/* RIGHT COLUMN: Actions Sidebar */}
       <div className="w-full md:w-80">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden sticky top-4">
             
+          {/* New Routine Button */}
           <Link 
             to="/workouts/new" 
             className="flex items-center justify-between p-4 hover:bg-gray-50 border-b border-gray-100 transition-colors"
@@ -105,6 +111,7 @@ export const Workouts: React.FC = () => {
             <span className="text-gray-400">›</span>
           </Link>
 
+          {/* New Folder Button (Placeholder) */}
           <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left">
             <div className="flex items-center gap-3">
                 <div className="bg-gray-100 p-2 rounded-lg">

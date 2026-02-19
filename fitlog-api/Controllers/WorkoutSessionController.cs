@@ -21,7 +21,7 @@ public class WorkoutSessionController : BaseController
         {
             var workoutsession = await _workoutsessionService.StartUserWorkoutSessionAsync(dto, CurrentUserId);
 
-            return CreatedAtAction(nameof(GetSessionById), new { id = workoutsession.Id }, workoutsession);
+            return CreatedAtAction(nameof(GetUserWorkoutSessionById), new { id = workoutsession.Id }, workoutsession);
         }
         catch (Exception ex)
         {
@@ -52,7 +52,7 @@ public class WorkoutSessionController : BaseController
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetSessionById(int id)
+    public async Task<IActionResult> GetUserWorkoutSessionById(int id)
     {
         var session = await _workoutsessionService.GetUserWorkoutSessionByIdAsync(id, CurrentUserId);
 

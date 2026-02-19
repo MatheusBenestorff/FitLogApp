@@ -12,6 +12,7 @@ export const workoutService = {
     return response.data;
   },
 
+
   create: async (data: CreateWorkoutDto) => {
     const response = await api.post<Workout>("/Workout", data);
     return response.data;
