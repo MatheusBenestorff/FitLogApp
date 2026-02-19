@@ -21,23 +21,86 @@ public class ExerciseService : IExerciseService
             {
                 Id = e.Id,
                 Name = e.Name,
-                MuscleGroup = e.PrimaryMuscleGroup
+                PrimaryMuscleGroup = e.PrimaryMuscleGroup
             })
             .ToListAsync();
     }
 
     public async Task<ExerciseDetailsDto?> GetUserExerciseByIdAsync(int id, int userId)
     {
-        return await _context.Exercises
+        var exerciseData = await _context.Exercises
             .Where(e => e.Id == id && e.UserId == userId)
-            .Select(e => new ExerciseDetailsDto
+            .Select(e => new
             {
-                Id = e.Id,
-                Name = e.Name,
-                MuscleGroup = e.PrimaryMuscleGroup
-
+                Exercise = e,
+                PastSessions = e.SessionExercises
+                    .Where(se => se.WorkoutSession.UserId == userId)
+                    .Select(se => new
+                    {
+                        Date = se.WorkoutSession.StartTime,
+                        SessionId = se.WorkoutSession.Id,
+                        Sets = se.Sets 
+                    })
+                    .ToList()
             })
             .FirstOrDefaultAsync();
+
+        if (exerciseData == null) return null;
+
+        var allSets = exerciseData.PastSessions.SelectMany(s => s.Sets).ToList();
+
+        double heaviestWeight = allSets.Any() ? allSets.Max(s => s.Weight) : 0;
+        
+        double bestOneRepMax = allSets.Any() ? allSets.Max(s => s.Weight * (1 + (s.Reps / 30.0))) : 0;
+        
+        double bestSetVolume = exerciseData.PastSessions.Any(s => s.Sets.Any()) 
+            ? exerciseData.PastSessions.Max(s => s.Sets.Sum(set => set.Weight * set.Reps)) 
+            : 0;
+
+        var chartData = exerciseData.PastSessions
+            .Where(s => s.Sets.Any()) 
+            .Select(s => new ExerciseChartDataDto
+            {
+                SessionId = s.SessionId, 
+                Date = s.Date,
+                MaxWeight = s.Sets.Max(set => set.Weight),
+                Volume = s.Sets.Sum(set => set.Weight * set.Reps),
+                OneRepMax = s.Sets.Max(set => set.Weight * (1 + (set.Reps / 30.0)))
+            })
+            .OrderBy(c => c.Date) 
+            .ToList();
+
+        var history = exerciseData.PastSessions
+            .Where(s => s.Sets.Any())
+            .OrderByDescending(s => s.Date) 
+            .Select(s => new ExerciseHistoryDto
+            {
+                SessionId = s.SessionId,
+                Date = s.Date,
+                Sets = s.Sets
+                    .Select(set => new ExerciseSetDto
+                    {
+                        Reps = set.Reps,
+                        Weight = set.Weight
+                    }).ToList()
+            })
+            .ToList();
+
+        return new ExerciseDetailsDto
+        {
+            Id = exerciseData.Exercise.Id,
+            Name = exerciseData.Exercise.Name,
+            Equipment = exerciseData.Exercise.Equipment ?? "Other",
+            PrimaryMuscleGroup = exerciseData.Exercise.PrimaryMuscleGroup,
+            SecondaryMuscleGroups = exerciseData.Exercise.SecondaryMuscleGroups,
+            
+            HeaviestWeight = Math.Round(heaviestWeight, 1),
+            BestOneRepMax = Math.Round(bestOneRepMax, 1),
+            BestSetVolume = Math.Round(bestSetVolume, 1),
+            
+            ChartData = chartData,
+            History = history
+        };
     }
 
     public async Task<ExerciseDetailsDto> CreateCustomExerciseAsync(CreateExerciseDto dto, int userId)
@@ -62,7 +125,7 @@ public class ExerciseService : IExerciseService
         {
             Id = exercise.Id,
             Name = exercise.Name,
-            MuscleGroup = exercise.PrimaryMuscleGroup
+            PrimaryMuscleGroup = exercise.PrimaryMuscleGroup
         };
     }
 
@@ -90,7 +153,7 @@ public class ExerciseService : IExerciseService
         {
             Id = exercise.Id,
             Name = exercise.Name,
-            MuscleGroup = exercise.PrimaryMuscleGroup
+            PrimaryMuscleGroup = exercise.PrimaryMuscleGroup
         };
     }
 
