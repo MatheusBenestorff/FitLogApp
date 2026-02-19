@@ -14,6 +14,24 @@ public class WorkoutSessionController : BaseController
         _workoutsessionService = workoutsessionService;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<WorkoutSession>>> GetAllWorkoutSessionsByUser()
+    {
+        var workoutSessions = await _workoutsessionService.GetAllWorkoutSessionsByUserIdAsync(CurrentUserId);
+        return Ok(workoutSessions);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserWorkoutSessionById(int id)
+    {
+        var session = await _workoutsessionService.GetUserWorkoutSessionByIdAsync(id, CurrentUserId);
+
+        if (session == null)
+            return NotFound("Session not found");
+
+        return Ok(session);
+    }
+
     [HttpPost("start")]
     public async Task<IActionResult> StartUserWorkoutSession([FromBody] StartSessionDto dto)
     {
@@ -51,15 +69,5 @@ public class WorkoutSessionController : BaseController
         }
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserWorkoutSessionById(int id)
-    {
-        var session = await _workoutsessionService.GetUserWorkoutSessionByIdAsync(id, CurrentUserId);
-
-        if (session == null)
-            return NotFound("Session not found");
-
-        return Ok(session);
-    }
 
 }

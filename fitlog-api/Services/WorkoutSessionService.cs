@@ -12,6 +12,29 @@ public class WorkoutSessionService : IWorkoutSessionService
         _context = context;
     }
 
+    public async Task<IEnumerable<SessionDetailsDto>> GetAllWorkoutSessionsByUserIdAsync(int userId)
+    {
+        var sessions = await _context.WorkoutSessions
+            .AsNoTracking() 
+            .Where(s => s.UserId == userId) 
+            .Include(s => s.SessionExercises)
+                .ThenInclude(se => se.Sets) 
+            .OrderByDescending(s => s.StartTime)
+            .ToListAsync();
+
+        return sessions.Select(MapToDto);
+    }
+
+    public async Task<SessionDetailsDto?> GetUserWorkoutSessionByIdAsync(int sessionId, int userId)
+    {
+        var session = await _context.WorkoutSessions
+            .Include(s => s.SessionExercises)
+            .ThenInclude(se => se.Sets)
+            .FirstOrDefaultAsync(s => s.Id == sessionId && s.UserId == userId);
+
+        return session == null ? null : MapToDto(session);
+    }
+
     public async Task<SessionDetailsDto> StartUserWorkoutSessionAsync(StartSessionDto dto, int userId)
     {
         var session = new WorkoutSession
@@ -106,15 +129,6 @@ public class WorkoutSessionService : IWorkoutSessionService
         return MapToDto(session);
     }
 
-    public async Task<SessionDetailsDto?> GetUserWorkoutSessionByIdAsync(int sessionId, int userId)
-    {
-        var session = await _context.WorkoutSessions
-            .Include(s => s.SessionExercises)
-            .ThenInclude(se => se.Sets)
-            .FirstOrDefaultAsync(s => s.Id == sessionId && s.UserId == userId);
-
-        return session == null ? null : MapToDto(session);
-    }
 
     // Aux
     private static SessionDetailsDto MapToDto(WorkoutSession session)
