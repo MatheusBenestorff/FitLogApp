@@ -43,6 +43,7 @@ public class UserService : IUserService
             .FirstOrDefaultAsync();
     }
 
+
     public async Task<UserDetailsDto> CreateUserAsync(CreateUserDto create)
     {
         if (await _context.Users.AnyAsync(u => u.Email == create.Email))

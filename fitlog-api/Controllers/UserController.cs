@@ -29,6 +29,14 @@ public class UserController : BaseController
         return Ok(user);
     }
 
+    [HttpGet("current")]
+    public async Task<ActionResult<User>> GetCurrentUser()
+    {
+        var user = await _userService.GetUserByIdAsync(CurrentUserId);
+        if (user == null) return NotFound();
+        return Ok(user);
+    }
+
     [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserDto create)
