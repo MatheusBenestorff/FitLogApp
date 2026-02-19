@@ -7,9 +7,9 @@ import { Workouts } from "./pages/Workouts";
 import { Exercises } from "./pages/Exercises";
 import { CreateWorkout } from "./pages/CreateWorkout";
 import { WorkoutDetails } from "./pages/WorkoutDetails";
-import type { JSX } from "react";
+import { Dashboard } from "./pages/Dashboard";
 
-const Dashboard = () => <h1 className="text-2xl font-bold text-gray-800">Feed Principal</h1>;
+import type { JSX } from "react";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuth();
