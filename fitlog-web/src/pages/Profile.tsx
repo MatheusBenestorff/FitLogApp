@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { userService } from "../services/userService";
-import type { UserDetailsDto } from "../services/userService";
+import type { UserDetailsDto } from "../types/user";
 import { sessionService } from "../services/sessionService";
 import type{ SessionDetailsDto } from "../types/session";
 import { SessionFeed } from "../components/SessionFeed";
@@ -131,7 +131,7 @@ export const Profile: React.FC = () => {
               {/* Dias Mockados */}
               {Array.from({ length: 28 }).map((_, i) => {
                  const day = i + 1;
-                 const isActive = [2, 5, 8, 12, 15, 18, 22].includes(day); // Dias "ativos" aleatórios
+                 const isActive = [2, 5, 8, 12, 15, 18, 22].includes(day);
                  return (
                    <div 
                      key={i} 
@@ -152,7 +152,7 @@ export const Profile: React.FC = () => {
       {/* FEED DE ATIVIDADES */}
       <div>
          <h3 className="font-bold text-gray-900 mb-4 text-lg">History</h3>
-         <SessionFeed sessions={sessions} />
+         <SessionFeed sessions={sessions} user={user}/>
       </div>
 
     </div>

@@ -10,3 +10,11 @@ export interface CreateUserDto {
   gender?: string;
   birthday?: string;
 }
+
+export interface UserDetailsDto {
+  id: number;
+  name: string;
+  email: string;
+  gender: string;
+  birthday: string;
+}

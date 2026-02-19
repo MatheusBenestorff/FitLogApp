@@ -1,12 +1,6 @@
 import api from "./api";
+import type { UserDetailsDto } from "../types/user";
 
-export interface UserDetailsDto {
-  id: number;
-  name: string;
-  email: string;
-  gender: string;
-  birthday: string;
-}
 
 export const userService = {
   getCurrentUser: async () => {

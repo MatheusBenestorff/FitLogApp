@@ -1,5 +1,6 @@
 import React from "react";
-import type{ SessionDetailsDto } from "../types/session";
+import type { SessionDetailsDto } from "../types/session";
+import type { UserDetailsDto } from "../types/user";
 import { 
   ThumbsUp, MessageSquare, Share2, MoreHorizontal 
 } from "lucide-react";
@@ -42,9 +43,10 @@ const formatRelativeTime = (dateString: string) => {
 
 interface SessionFeedProps {
   sessions: SessionDetailsDto[];
+  user?: UserDetailsDto | null;
 }
 
-export const SessionFeed: React.FC<SessionFeedProps> = ({ sessions }) => {
+export const SessionFeed: React.FC<SessionFeedProps> = ({ sessions, user }) => {
   if (sessions.length === 0) {
     return (
       <div className="bg-white p-8 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm">
@@ -63,7 +65,9 @@ export const SessionFeed: React.FC<SessionFeedProps> = ({ sessions }) => {
             <div className="flex items-center gap-3">
               <img src={avatarImg} alt="User" className="w-10 h-10 rounded-full object-cover border border-gray-100" />
               <div>
-                <h3 className="font-bold text-gray-900 text-sm">matheusbenestorff</h3>
+                <h3 className="font-bold text-gray-900 text-sm">
+                  {user ? user.name.toLowerCase().replace(/\s/g, '') : "Carregando..."}
+                </h3>
                 <p className="text-xs text-gray-500">{formatRelativeTime(session.startTime)}</p>
               </div>
             </div>
