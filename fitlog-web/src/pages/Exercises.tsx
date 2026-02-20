@@ -92,11 +92,22 @@ export const Exercises: React.FC = () => {
                     )}
                   </div>
                </div>
-               
-               {/* Imagem do Exercício (Placeholder) */}
-               <div className="w-full md:w-64 h-48 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center text-gray-300 flex-shrink-0">
-                  <ImageIcon size={48} />
-               </div>
+
+                {/* Imagem do Exercício */}
+                <div className="w-full md:w-64 h-48 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center text-gray-300 flex-shrink-0 overflow-hidden p-2">
+                  {selectedExercise.imageUrl ? (
+                    <img 
+                      src={selectedExercise.imageUrl} 
+                      alt={selectedExercise.name} 
+                      className="w-full h-full object-contain mix-blend-darken" 
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <ImageIcon size={48} className="text-gray-300" />
+                      <span className="text-xs text-gray-400 font-medium">No Image</span>
+                    </div>
+                  )}
+                </div>
             </div>
 
             {/* CONTEÚDO PRINCIPAL */}

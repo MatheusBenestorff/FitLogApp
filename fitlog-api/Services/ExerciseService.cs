@@ -155,7 +155,11 @@ public class ExerciseService : IExerciseService
 
             exercise.Name = dto.Name;
         }
-        exercise.PrimaryMuscleGroup = dto.MuscleGroup;
+        exercise.PrimaryMuscleGroup = dto.PrimaryMuscleGroup;
+        exercise.SecondaryMuscleGroups = dto.SecondaryMuscleGroups;
+        exercise.Equipment = dto.Equipment;
+        exercise.ImageUrl = dto.ImageUrl;
+
 
         await _context.SaveChangesAsync();
 
@@ -163,7 +167,10 @@ public class ExerciseService : IExerciseService
         {
             Id = exercise.Id,
             Name = exercise.Name,
-            PrimaryMuscleGroup = exercise.PrimaryMuscleGroup
+            PrimaryMuscleGroup = exercise.PrimaryMuscleGroup,
+            Equipment = exercise.Equipment,
+            SecondaryMuscleGroups = exercise.SecondaryMuscleGroups,
+            ImageUrl = exercise.ImageUrl,
         };
     }
 

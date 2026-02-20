@@ -2,6 +2,7 @@ export interface Exercise {
   id: number;
   name: string;
   equipment: string;
+  imageUrl: string;
   primaryMuscleGroup: string;
   secondaryMuscleGroups: string;
   heaviestWeight: number;
@@ -40,6 +41,7 @@ export interface Exercise {
     id: number;
     name: string;
     equipment: string;
+    imageUrl: string;
     primaryMuscleGroup: string;
     secondaryMuscleGroups: string;
     heaviestWeight: number;
