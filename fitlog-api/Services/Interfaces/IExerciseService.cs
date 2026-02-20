@@ -4,7 +4,7 @@ namespace FitLogApp.api.Services;
 
 public interface IExerciseService
 {
-    Task<IEnumerable<ExerciseDetailsDto>> GetAllUserExercisesAsync(int userId);
+    Task<IEnumerable<ExerciseSummaryDto>> GetAllUserExercisesAsync(int userId);
     Task<ExerciseDetailsDto> CreateCustomExerciseAsync(CreateExerciseDto dto, int userId);
     Task<ExerciseDetailsDto?> UpdateCustomExerciseAsync(int id, UpdateExerciseDto dto, int userId);
 

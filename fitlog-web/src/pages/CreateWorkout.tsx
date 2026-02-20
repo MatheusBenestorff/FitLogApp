@@ -16,11 +16,10 @@ export const CreateWorkout: React.FC = () => {
   const [workoutName, setWorkoutName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-
   const handleAddExerciseFromLibrary = (exercise: Exercise) => {
     if (selectedExercises.find(e => e.id === exercise.id)) return;
     setSelectedExercises(prev => [...prev, exercise]);
-};
+  };
 
   const handleRemoveExercise = (indexToRemove: number) => {
     setSelectedExercises(prev => prev.filter((_, index) => index !== indexToRemove));
@@ -54,7 +53,7 @@ export const CreateWorkout: React.FC = () => {
     // Container Principal 
     <div className="flex h-[calc(100vh-6rem)] gap-6">
 
-      {/* --- COLUNA ESQUERDA (Editor do Treino) --- */}
+      {/* --- COLUNA ESQUERDA  --- */}
       <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
         
         {/* Header do Editor */}
@@ -120,11 +119,20 @@ export const CreateWorkout: React.FC = () => {
                 selectedExercises.map((ex, index) => (
                   <div key={`${ex.id}-${index}`} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center group hover:border-blue-300 transition-colors">
                     <div className="flex items-center gap-4">
-                      {/* Avatar */}
-                      <div className="bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm border border-blue-100">
-                        {ex.name.charAt(0)}
-                      </div>
                       
+                      {/* Avatar do Exercício */}
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 overflow-hidden bg-gray-100 text-gray-500">
+                        {ex.imageUrl ? (
+                          <img 
+                            src={ex.imageUrl} 
+                            alt={ex.name} 
+                            className="w-full h-full object-contain bg-white p-0.5 mix-blend-darken" 
+                          />
+                        ) : (
+                          ex.name.charAt(0)
+                        )}
+                      </div>
+                          
                       {/* Info */}
                       <div>
                         <h4 className="font-semibold text-gray-800">{ex.name}</h4>
@@ -153,7 +161,7 @@ export const CreateWorkout: React.FC = () => {
 
       <ExerciseLibrary 
         onSelectExercise={handleAddExerciseFromLibrary} 
-        className="w-96 hidden lg:flex" 
+        className="w-96 hidden lg:flex flex-shrink-0" 
       />
 
     </div>

@@ -92,8 +92,8 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
               return (
                 <div 
                   key={exercise.id} 
-                  onClick={() =>
-                     onSelectExercise(exercise)}                  className={`
+                  onClick={() => onSelectExercise(exercise)}                  
+                  className={`
                     flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all
                     ${isSelected 
                       ? "bg-blue-50 border border-blue-100 ring-1 ring-blue-200" 
@@ -101,11 +101,20 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
                     }
                   `}
                 >
+                  {/* Avatar do Exercício */}
                   <div className={`
-                    w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0
+                    w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 overflow-hidden
                     ${isSelected ? "bg-blue-200 text-blue-700" : "bg-gray-100 text-gray-500"}
                   `}>
-                      {exercise.name.charAt(0)}
+                    {exercise.imageUrl ? (
+                      <img 
+                        src={exercise.imageUrl} 
+                        alt={exercise.name} 
+                        className="w-full h-full object-contain bg-white p-0.5" 
+                      />
+                    ) : (
+                      exercise.name.charAt(0)
+                    )}
                   </div>
                   
                   <div className="flex flex-col min-w-0">

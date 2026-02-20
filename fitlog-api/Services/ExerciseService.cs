@@ -13,16 +13,18 @@ public class ExerciseService : IExerciseService
         _context = context;
     }
 
-    public async Task<IEnumerable<ExerciseDetailsDto>> GetAllUserExercisesAsync(int userId)
+    public async Task<IEnumerable<ExerciseSummaryDto>> GetAllUserExercisesAsync(int userId)
     {
         return await _context.Exercises
+            .AsNoTracking()
             .Where(e => e.UserId == userId)
             .OrderBy(e => e.Name)
-            .Select(e => new ExerciseDetailsDto
+            .Select(e => new ExerciseSummaryDto
             {
                 Id = e.Id,
                 Name = e.Name,
-                PrimaryMuscleGroup = e.PrimaryMuscleGroup
+                PrimaryMuscleGroup = e.PrimaryMuscleGroup,
+                ImageUrl = e.ImageUrl
             })
             .ToListAsync();
     }
