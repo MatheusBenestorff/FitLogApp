@@ -1,3 +1,4 @@
+using System.Xml;
 using FitLogApp.api.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -92,6 +93,7 @@ public class ExerciseService : IExerciseService
         {
             Id = exerciseData.Exercise.Id,
             Name = exerciseData.Exercise.Name,
+            ImageUrl = exerciseData.Exercise.ImageUrl,
             Equipment = exerciseData.Exercise.Equipment ?? "Other",
             PrimaryMuscleGroup = exerciseData.Exercise.PrimaryMuscleGroup,
             SecondaryMuscleGroups = exerciseData.Exercise.SecondaryMuscleGroups,
@@ -116,7 +118,10 @@ public class ExerciseService : IExerciseService
         var exercise = new Exercise
         {
             Name = dto.Name,
-            PrimaryMuscleGroup = dto.MuscleGroup,
+            PrimaryMuscleGroup = dto.PrimaryMuscleGroup,
+            Equipment = dto.Equipment,
+            SecondaryMuscleGroups = dto.SecondaryMuscleGroups,
+            ImageUrl = dto.ImageUrl,
             UserId = userId
         };
 
@@ -127,7 +132,10 @@ public class ExerciseService : IExerciseService
         {
             Id = exercise.Id,
             Name = exercise.Name,
-            PrimaryMuscleGroup = exercise.PrimaryMuscleGroup
+            PrimaryMuscleGroup = exercise.PrimaryMuscleGroup,
+            Equipment = exercise.Equipment,
+            SecondaryMuscleGroups = exercise.SecondaryMuscleGroups,
+            ImageUrl = exercise.ImageUrl,
         };
     }
 
