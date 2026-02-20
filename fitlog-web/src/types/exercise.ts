@@ -23,6 +23,7 @@ export interface Exercise {
   
   interface ExerciseHistory {
     sessionId: number;
+    sessionName: string;
     date: string;
     sets: ExerciseSet[];
   }

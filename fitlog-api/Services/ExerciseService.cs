@@ -39,6 +39,7 @@ public class ExerciseService : IExerciseService
                     {
                         Date = se.WorkoutSession.StartTime,
                         SessionId = se.WorkoutSession.Id,
+                        SessionName = se.WorkoutSession.WorkoutNameSnapshot,
                         Sets = se.Sets 
                     })
                     .ToList()
@@ -76,6 +77,7 @@ public class ExerciseService : IExerciseService
             .Select(s => new ExerciseHistoryDto
             {
                 SessionId = s.SessionId,
+                SessionName = s.SessionName,
                 Date = s.Date,
                 Sets = s.Sets
                     .Select(set => new ExerciseSetDto

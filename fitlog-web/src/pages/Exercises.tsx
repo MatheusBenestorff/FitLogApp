@@ -199,7 +199,7 @@ export const Exercises: React.FC = () => {
                                 {/* Cabeçalho da Sessão no Histórico */}
                                 <div className="mb-4">
                                    <Link to={`/workouts/${session.sessionId}`} className="font-bold text-gray-900 hover:text-blue-600 transition-colors">
-                                      Workout Session
+                                      {session.sessionName}
                                    </Link>
                                    <p className="text-xs text-gray-500">{new Date(session.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'})}</p>
                                 </div>
