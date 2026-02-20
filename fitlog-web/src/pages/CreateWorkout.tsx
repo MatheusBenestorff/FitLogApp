@@ -129,7 +129,7 @@ export const CreateWorkout: React.FC = () => {
                       <div>
                         <h4 className="font-semibold text-gray-800">{ex.name}</h4>
                         <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full font-medium">
-                            {ex.muscleGroup}
+                            {ex.primaryMuscleGroup}
                         </span>
                       </div>
                     </div>

@@ -37,7 +37,7 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
 
   const filteredExercises = exercises.filter(ex => 
     ex.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    ex.muscleGroup.toLowerCase().includes(searchQuery.toLowerCase())
+    ex.primaryMuscleGroup.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -113,7 +113,7 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
                       {exercise.name}
                     </span>
                     <span className="text-xs text-gray-500 truncate">
-                      {exercise.muscleGroup}
+                      {exercise.primaryMuscleGroup}
                     </span>
                   </div>
                 </div>
