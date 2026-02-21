@@ -10,7 +10,8 @@ import {
   Link as LinkIcon, 
   Dumbbell,
   Clock,
-  LayoutList
+  LayoutList,
+  ImageIcon
 } from "lucide-react";
 
 import avatarImg from "../assets/avatar-placeholder.png"; 
@@ -74,10 +75,18 @@ export const WorkoutDetails: React.FC = () => {
               workout.exercises.map((exercise, index) => (
                 <div key={`${exercise.id}-${index}`} className="p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors">
                   
-                  {/* Ícone / Avatar do Exercício */}
-                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                    <Dumbbell className="text-gray-400" size={20} />
-                  </div>
+                      {/* Avatar do Exercício */}
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 overflow-hidden bg-gray-100 text-gray-500">
+                        {exercise.imageUrl ? (
+                          <img 
+                            src={exercise.imageUrl} 
+                            alt={exercise.name} 
+                            className="w-full h-full object-contain bg-white p-0.5 mix-blend-darken" 
+                          />
+                        ) : (
+                          exercise.name.charAt(0)
+                        )}
+                      </div>
 
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">{exercise.name}</h3>
@@ -89,7 +98,7 @@ export const WorkoutDetails: React.FC = () => {
 
                   {/* Grupo Muscular */}
                   <span className="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                    {exercise.muscleGroup}
+                    {exercise.primaryMuscleGroup}
                   </span>
                 </div>
               ))
@@ -160,7 +169,7 @@ export const WorkoutDetails: React.FC = () => {
               {/* Lista simples de músculos baseada nos exercícios */}
               <div className="space-y-2">
 
-                 {Array.from(new Set(workout.exercises?.map(e => e.muscleGroup))).map(muscle => (
+                 {Array.from(new Set(workout.exercises?.map(e => e.primaryMuscleGroup))).map(muscle => (
                     <div key={muscle} className="flex items-center justify-between text-sm">
                        <span className="text-gray-600">{muscle}</span>
                        <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">

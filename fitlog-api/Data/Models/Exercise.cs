@@ -21,7 +21,6 @@ public class Exercise
 
     public int? UserId { get; set; }
 
-    public List<Workout> WorkoutExercises { get; set; }
-
+    public List<WorkoutExercise> WorkoutExercises { get; set; }
     public List<SessionExercise> SessionExercises { get; set; }
 }

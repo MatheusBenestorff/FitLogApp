@@ -21,11 +21,12 @@ public class WorkoutService : IWorkoutService
                 Id = w.Id,
                 Name = w.Name,
                 UserId = w.UserId,
-                Exercises = w.Exercises.Select(e => new ExerciseDetailsDto
+                Exercises = w.WorkoutExercises.Select(e => new ExerciseDetailsDto
                 {
                     Id = e.Id,
                     Name = e.Name,
-                    PrimaryMuscleGroup = e.PrimaryMuscleGroup
+                    PrimaryMuscleGroup = e.PrimaryMuscleGroup,
+                    ImageUrl = e.ImageUrl
                 }).ToList()
             })
             .ToListAsync();
@@ -44,7 +45,8 @@ public class WorkoutService : IWorkoutService
                 {
                     Id = e.Id,
                     Name = e.Name,
-                    PrimaryMuscleGroup = e.PrimaryMuscleGroup
+                    PrimaryMuscleGroup = e.PrimaryMuscleGroup,
+                    ImageUrl = e.ImageUrl
                 }).ToList()
             })
             .FirstOrDefaultAsync();

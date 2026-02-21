@@ -13,5 +13,5 @@ public class Workout
 
     public User User { get; set; }
 
-    public List<Exercise> Exercises { get; set; }
+    public List<WorkoutExercise> WorkoutExercises { get; set; }
 }
