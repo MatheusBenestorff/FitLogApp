@@ -1,31 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { userService } from "../services/userService";
-import type { UserDetailsDto } from "../types/user";
+import { useAuth } from "../contexts/AuthContext"; // <-- Importando o contexto
 import { sessionService } from "../services/sessionService";
-import type{ SessionDetailsDto } from "../types/session";
+import type { SessionDetailsDto } from "../types/session";
 import { SessionFeed } from "../components/SessionFeed";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import avatarImg from "../assets/avatar-placeholder.png";
 
 export const Profile: React.FC = () => {
-  const [user, setUser] = useState<UserDetailsDto | null>(null);
+  const { user } = useAuth(); 
+  
   const [sessions, setSessions] = useState<SessionDetailsDto[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    loadSessions();
   }, []);
 
-  const loadData = async () => {
+  const loadSessions = async () => {
     try {
-      const [userData, sessionsData] = await Promise.all([
-        userService.getCurrentUser(),
-        sessionService.getAllByUser(),
-      ]);
-      setUser(userData);
+      const sessionsData = await sessionService.getAllByUser();
       setSessions(sessionsData);
     } catch (error) {
-      console.error("Erro ao carregar perfil", error);
+      console.error("Erro ao carregar sessões", error);
     } finally {
       setLoading(false);
     }
@@ -80,7 +76,7 @@ export const Profile: React.FC = () => {
         </div>
       </div>
 
-      {/* AREA CENTRAL (GRÁFICOS E CALENDÁRIO) */}
+      {/* AREA CENTRAL */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Coluna da Esquerda: Gráfico de Estatísticas (Placeholder) */}
@@ -112,7 +108,7 @@ export const Profile: React.FC = () => {
           </div>
         </div>
 
-        {/* Coluna da Direita: Calendário (Mock Visual) */}
+        {/* Coluna da Direita */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
            <div className="flex items-center justify-between mb-4">
              <h3 className="font-bold text-gray-900">Calendar</h3>
