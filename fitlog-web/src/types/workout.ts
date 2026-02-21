@@ -1,18 +1,54 @@
-import type { Exercise } from "../types/exercise";
-  
-  export interface Workout {
-    id: number;
+
+export interface WorkoutSummary {
+  id: number;
+  name: string;
+  exercises: {
+    exerciseId: number;
     name: string;
-    userId: number;
-    exercises: Exercise[]; 
-  }
-  
-  export interface CreateWorkoutDto {
-    name: string;
-    exerciseIds: number[];
-  }
-  
-  export interface UpdateWorkoutDto {
-    name: string;
-    exerciseIds: number[];
-  }
+    primaryMuscleGroup: string;
+  }[];
+}
+
+export interface WorkoutSetDto {
+  id: number;
+  orderIndex: number;
+  targetWeight: number | null;
+  targetReps: number | null;
+}
+
+export interface WorkoutExerciseDto {
+  id: number;
+  exerciseId: number;
+  name: string;
+  primaryMuscleGroup: string;
+  imageUrl: string | null;
+  orderIndex: number;
+  sets: WorkoutSetDto[];
+}
+
+export interface WorkoutDetails {
+  id: number;
+  name: string;
+  userId: number;
+  exercises: WorkoutExerciseDto[]; 
+}
+
+
+export interface CreateWorkoutSetDto {
+  orderIndex: number;
+  targetWeight: number | null;
+  targetReps: number | null;
+}
+
+export interface CreateWorkoutExerciseDto {
+  exerciseId: number;
+  orderIndex: number;
+  sets: CreateWorkoutSetDto[];
+}
+
+export interface CreateWorkoutDto {
+  name: string;
+  exercises: CreateWorkoutExerciseDto[];
+}
+
+export interface UpdateWorkoutDto extends CreateWorkoutDto {}

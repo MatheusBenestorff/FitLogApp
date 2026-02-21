@@ -1,112 +1,151 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { workoutService } from "../services/workoutService";
-import type { Exercise } from "../types/exercise"; // Ajuste o caminho se necessário
+import type { Exercise } from "../types/exercise"; 
+// Importamos apenas o DTO de criação para tipar o payload final
+import type { CreateWorkoutDto } from "../types/workout"; 
 import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { 
   ArrowLeft, 
   Dumbbell, 
-  Trash2
+  Trash2,
+  GripVertical 
 } from "lucide-react";
+
+interface WorkoutSet {
+  weight: string;
+  reps: string;
+}
+
+interface WorkoutExercise extends Exercise {
+  sets: WorkoutSet[];
+}
 
 export const CreateWorkout: React.FC = () => {
   const navigate = useNavigate();
 
-  const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<WorkoutExercise[]>([]);
   const [workoutName, setWorkoutName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+
   const handleAddExerciseFromLibrary = (exercise: Exercise) => {
     if (selectedExercises.find(e => e.id === exercise.id)) return;
-    setSelectedExercises(prev => [...prev, exercise]);
+    
+    setSelectedExercises(prev => [
+      ...prev, 
+      { ...exercise, sets: [{ weight: "", reps: "" }] }
+    ]);
   };
 
   const handleRemoveExercise = (indexToRemove: number) => {
     setSelectedExercises(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleAddSet = (exerciseIndex: number) => {
+    const updatedExercises = [...selectedExercises];
+    const lastSet = updatedExercises[exerciseIndex].sets[updatedExercises[exerciseIndex].sets.length - 1];
+    
+    updatedExercises[exerciseIndex].sets.push({ 
+      weight: lastSet ? lastSet.weight : "", 
+      reps: lastSet ? lastSet.reps : "" 
+    });
+    
+    setSelectedExercises(updatedExercises);
+  };
+
+  const handleRemoveSet = (exerciseIndex: number, setIndexToRemove: number) => {
+    const updatedExercises = [...selectedExercises];
+    updatedExercises[exerciseIndex].sets = updatedExercises[exerciseIndex].sets.filter((_, index) => index !== setIndexToRemove);
+    setSelectedExercises(updatedExercises);
+  };
+
+  const handleSetChange = (exerciseIndex: number, setIndex: number, field: 'weight' | 'reps', value: string) => {
+    const updatedExercises = [...selectedExercises];
+    updatedExercises[exerciseIndex].sets[setIndex][field] = value;
+    setSelectedExercises(updatedExercises);
+  };
+
   const handleSave = async () => {
     if (!workoutName.trim()) {
-      alert("Por favor, dê um nome para a rotina.");
+      alert("Please give your routine a title.");
       return;
     }
     if (selectedExercises.length === 0) {
-      alert("Adicione pelo menos um exercício.");
+      alert("Add at least one exercise.");
       return;
     }
 
     setIsSaving(true);
     try {
-      await workoutService.create({
+      const payload: CreateWorkoutDto = {
         name: workoutName,
-        exerciseIds: selectedExercises.map(e => e.id)
-      });
+        exercises: selectedExercises.map((ex, i) => ({
+          exerciseId: ex.id,
+          orderIndex: i,
+          sets: ex.sets.map((set, setIndex) => ({
+            orderIndex: setIndex,
+            targetWeight: set.weight ? parseFloat(set.weight) : null,
+            targetReps: set.reps ? parseInt(set.reps) : null
+          }))
+        }))
+      };
+
+      await workoutService.create(payload);
       navigate("/workouts"); 
     } catch (error) {
-      alert("Erro ao criar rotina.");
+      alert("Error saving routine.");
     } finally {
       setIsSaving(false);
     }
   };
 
+  const totalSets = selectedExercises.reduce((acc, ex) => acc + ex.sets.length, 0);
+
   return (
-    // Container Principal 
     <div className="flex h-[calc(100vh-6rem)] gap-6">
 
-      {/* --- COLUNA ESQUERDA  --- */}
+      {/* --- COLUNA ESQUERDA --- */}
       <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
         
-        {/* Header do Editor */}
+        {/* Header */}
         <header className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => navigate(-1)} 
-              className="text-gray-500 hover:text-gray-800 transition-colors"
-            >
+            <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-800 transition-colors">
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-xl font-bold text-gray-800">Create Workout</h1>
+            <h1 className="text-xl font-bold text-gray-800">Create Routine</h1>
           </div>
           <button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors disabled:opacity-50 text-sm"
           >
-            {isSaving ? "Saving..." : "Save Workout"}
+            {isSaving ? "Saving..." : "Save Routine"}
           </button>
         </header>
 
-        {/* Conteúdo Scrollável */}
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-3xl mx-auto">
+        {/* Conteúdo Principal */}
+        <div className="flex-1 overflow-y-auto p-8 bg-gray-50/30">
+          <div className="max-w-3xl mx-auto space-y-6">
             
             {/* Input Nome */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">
-                Workout Name
-              </label>
+            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <input
                 type="text"
-                placeholder="Ex: Chest Day - Hypertrophy"
+                placeholder="Workout Routine Title"
                 value={workoutName}
                 onChange={(e) => setWorkoutName(e.target.value)}
-                className="w-full text-lg p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="w-full text-xl font-bold text-gray-900 placeholder-gray-400 outline-none"
                 autoFocus
               />
             </div>
 
-            {/* Lista de Exercícios Selecionados */}
+            {/* Lista de Exercícios */}
             <div className="space-y-4">
-              <div className="flex justify-between items-center mb-2 px-1">
-                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                    Exercises ({selectedExercises.length})
-                 </h3>
-              </div>
-
               {selectedExercises.length === 0 ? (
-                // Empty State
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center justify-center text-center bg-gray-50/50">
-                  <div className="bg-white p-4 rounded-full mb-4 shadow-sm border border-gray-100">
+                <div className="bg-white border-2 border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center justify-center text-center">
+                  <div className="bg-gray-50 p-4 rounded-full mb-4 shadow-sm border border-gray-100">
                     <Dumbbell size={32} className="text-gray-300" />
                   </div>
                   <h3 className="text-base font-semibold text-gray-900">No exercises added</h3>
@@ -115,41 +154,96 @@ export const CreateWorkout: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                // Lista de Itens
-                selectedExercises.map((ex, index) => (
-                  <div key={`${ex.id}-${index}`} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center group hover:border-blue-300 transition-colors">
-                    <div className="flex items-center gap-4">
-                      
-                      {/* Avatar do Exercício */}
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 overflow-hidden bg-gray-100 text-gray-500">
-                        {ex.imageUrl ? (
-                          <img 
-                            src={ex.imageUrl} 
-                            alt={ex.name} 
-                            className="w-full h-full object-contain bg-white p-0.5 mix-blend-darken" 
-                          />
-                        ) : (
-                          ex.name.charAt(0)
-                        )}
+                selectedExercises.map((ex, exerciseIndex) => (
+                  <div key={`${ex.id}-${exerciseIndex}`} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    
+                    {/* Cabeçalho do Exercício */}
+                    <div className="p-4 flex items-center justify-between group">
+                      <div className="flex items-center gap-4">
+                        {/* Drag Handle */}
+                        <div className="text-gray-300 cursor-grab hover:text-gray-500">
+                           <GripVertical size={20} />
+                        </div>
+
+                        {/* Avatar */}
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 overflow-hidden bg-gray-100 text-gray-500">
+                          {ex.imageUrl ? (
+                            <img src={ex.imageUrl} alt={ex.name} className="w-full h-full object-contain bg-white p-0.5 mix-blend-darken" />
+                          ) : (
+                            ex.name.charAt(0)
+                          )}
+                        </div>
+                        <h4 className="font-bold text-gray-900">{ex.name}</h4>
                       </div>
-                          
-                      {/* Info */}
-                      <div>
-                        <h4 className="font-semibold text-gray-800">{ex.name}</h4>
-                        <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded-full font-medium">
-                            {ex.primaryMuscleGroup}
-                        </span>
+
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <button onClick={() => handleRemoveExercise(exerciseIndex)} className="text-red-400 hover:text-red-600 p-2">
+                           <Trash2 size={18} />
+                         </button>
                       </div>
                     </div>
 
-                    {/* Ações */}
-                    <button 
-                      onClick={() => handleRemoveExercise(index)}
-                      className="text-gray-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                      title="Remove exercise"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    {/* Tabela de Séries */}
+                    <div className="px-4 pb-4">
+                      {/* Headers da Tabela */}
+                      <div className="flex text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 px-2">
+                        <div className="w-12 text-center">Set</div>
+                        <div className="flex-1 text-center">KG</div>
+                        <div className="flex-1 text-center">Reps</div>
+                        <div className="w-8"></div> 
+                      </div>
+
+                      {/* Linhas das Séries */}
+                      <div className="space-y-2">
+                        {ex.sets.map((set, setIndex) => (
+                          <div key={setIndex} className="flex items-center gap-2 group/set">
+                            <div className="w-12 text-center text-sm font-bold text-gray-500 bg-gray-100 py-1.5 rounded-md">
+                              {setIndex + 1}
+                            </div>
+                            
+                            <div className="flex-1">
+                              <input 
+                                type="number" 
+                                placeholder="-"
+                                value={set.weight}
+                                onChange={(e) => handleSetChange(exerciseIndex, setIndex, 'weight', e.target.value)}
+                                className="w-full bg-gray-100 text-center py-1.5 rounded-md text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                              />
+                            </div>
+                            
+                            <div className="flex-1">
+                              <input 
+                                type="number" 
+                                placeholder="-"
+                                value={set.reps}
+                                onChange={(e) => handleSetChange(exerciseIndex, setIndex, 'reps', e.target.value)}
+                                className="w-full bg-gray-100 text-center py-1.5 rounded-md text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                              />
+                            </div>
+
+                            <div className="w-8 flex justify-center">
+                              {ex.sets.length > 1 && (
+                                <button 
+                                  onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
+                                  className="text-gray-300 hover:text-red-500 opacity-0 group-hover/set:opacity-100 transition-opacity"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Botão Adicionar Série */}
+                      <button 
+                        onClick={() => handleAddSet(exerciseIndex)}
+                        className="w-full mt-4 py-2 bg-gray-50 hover:bg-gray-100 text-blue-600 text-sm font-bold rounded-lg transition-colors"
+                      >
+                        + Add Set
+                      </button>
+                    </div>
+
                   </div>
                 ))
               )}
@@ -159,10 +253,37 @@ export const CreateWorkout: React.FC = () => {
         </div>
       </div>
 
-      <ExerciseLibrary 
-        onSelectExercise={handleAddExerciseFromLibrary} 
-        className="w-96 hidden lg:flex flex-shrink-0" 
-      />
+      {/* --- COLUNA DIREITA --- */}
+      <div className="w-96 hidden lg:flex flex-col gap-6 flex-shrink-0 h-full">
+         
+         {/* Summary Card */}
+         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex-shrink-0">
+            <h3 className="font-bold text-gray-900 mb-4">Summary</h3>
+            <div className="flex justify-between items-center">
+               <div className="flex gap-8">
+                  <div>
+                     <span className="block text-xs text-gray-500 mb-1">Exercises</span>
+                     <span className="font-bold text-gray-900 text-lg">{selectedExercises.length}</span>
+                  </div>
+                  <div>
+                     <span className="block text-xs text-gray-500 mb-1">Total Sets</span>
+                     <span className="font-bold text-gray-900 text-lg">{totalSets}</span>
+                  </div>
+               </div>
+               
+               {/* Placeholder do Mapa Muscular */}
+               <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center text-gray-300 border border-gray-100">
+                  <Dumbbell size={24} />
+               </div>
+            </div>
+         </div>
+
+         {/* Library  */}
+         <ExerciseLibrary 
+           onSelectExercise={handleAddExerciseFromLibrary} 
+           className="flex-1" 
+         />
+      </div>
 
     </div>
   );
