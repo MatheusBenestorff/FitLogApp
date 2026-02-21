@@ -14,7 +14,7 @@ public class WorkoutController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Workout>>> GetAllWorkoutsByUser()
+    public async Task<ActionResult<IEnumerable<WorkoutSummaryDto>>> GetAllWorkoutsByUser()
     {
         var workouts = await _workoutService.GetAllWorkoutsByUserIdAsync(CurrentUserId);
         return Ok(workouts);

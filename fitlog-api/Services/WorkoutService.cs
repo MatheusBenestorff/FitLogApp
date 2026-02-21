@@ -12,25 +12,22 @@ public class WorkoutService : IWorkoutService
         _context = context;
     }
 
-    public async Task<IEnumerable<WorkoutDetailsDto>> GetAllWorkoutsByUserIdAsync(int userId)
+    public async Task<IEnumerable<WorkoutSummaryDto>> GetAllWorkoutsByUserIdAsync(int userId)
     {
         return await _context.Workouts
-            .AsNoTracking()
+            .AsNoTracking() 
             .Where(w => w.UserId == userId)
-            .Select(w => new WorkoutDetailsDto
+            .Select(w => new WorkoutSummaryDto
             {
                 Id = w.Id,
                 Name = w.Name,
-                UserId = w.UserId,
                 Exercises = w.WorkoutExercises
                     .OrderBy(we => we.OrderIndex)
-                    .Select(we => new WorkoutExerciseDto
+                    .Select(we => new WorkoutExerciseSummaryDto
                     {
-                        Id = we.Id,
                         ExerciseId = we.ExerciseId,
                         Name = we.Exercise.Name, 
-                        PrimaryMuscleGroup = we.Exercise.PrimaryMuscleGroup,
-                        OrderIndex = we.OrderIndex,
+                        PrimaryMuscleGroup = we.Exercise.PrimaryMuscleGroup
                     }).ToList()
             })
             .ToListAsync();
