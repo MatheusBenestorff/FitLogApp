@@ -7,5 +7,5 @@ public class CreateWorkoutDto
     [Required]
     public string Name { get; set; }
 
-    public List<int> ExerciseIds { get; set; }
+    public List<CreateWorkoutExerciseDto> Exercises { get; set; }
 }

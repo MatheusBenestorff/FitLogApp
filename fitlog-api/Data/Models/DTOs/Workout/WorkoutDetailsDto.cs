@@ -8,5 +8,5 @@ public class WorkoutDetailsDto
 
     public int UserId { get; set; }
 
-    public List<ExerciseDetailsDto> Exercises { get; set; }
+    public List<WorkoutExerciseDto> Exercises { get; set; }
 }
