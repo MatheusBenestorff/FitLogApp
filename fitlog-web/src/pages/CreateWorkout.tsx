@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { workoutService } from "../services/workoutService";
 import type { Exercise } from "../types/exercise"; 
-// Importamos apenas o DTO de criação para tipar o payload final
 import type { CreateWorkoutDto } from "../types/workout"; 
 import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { 

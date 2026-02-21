@@ -26,7 +26,7 @@ export interface WorkoutExerciseDto {
   sets: WorkoutSetDto[];
 }
 
-export interface WorkoutDetails {
+export interface WorkoutDetailsDto {
   id: number;
   name: string;
   userId: number;

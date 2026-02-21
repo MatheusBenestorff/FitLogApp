@@ -1,6 +1,6 @@
 import api from "./api";
 import type { 
-  WorkoutDetails, 
+  WorkoutDetailsDto, 
   CreateWorkoutDto, 
   UpdateWorkoutDto, 
   WorkoutSummary 
@@ -13,17 +13,17 @@ export const workoutService = {
   },
 
   getById: async (id: number) => {
-    const response = await api.get<WorkoutDetails>(`/Workout/${id}`);
+    const response = await api.get<WorkoutDetailsDto>(`/Workout/${id}`);
     return response.data;
   },
 
   create: async (data: CreateWorkoutDto) => {
-    const response = await api.post<WorkoutDetails>("/Workout", data);
+    const response = await api.post<WorkoutDetailsDto>("/Workout", data);
     return response.data;
   },
 
   update: async (id: number, data: UpdateWorkoutDto) => {
-    const response = await api.put<WorkoutDetails>(`/Workout/${id}`, data);
+    const response = await api.put<WorkoutDetailsDto>(`/Workout/${id}`, data);
     return response.data;
   },
 
