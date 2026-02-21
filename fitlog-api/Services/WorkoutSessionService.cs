@@ -37,49 +37,49 @@ public class WorkoutSessionService : IWorkoutSessionService
 
     public async Task<SessionDetailsDto> StartUserWorkoutSessionAsync(StartSessionDto dto, int userId)
     {
-        var session = new WorkoutSession
-        {
-            UserId = userId,
-            StartTime = DateTime.UtcNow,
-            EndTime = null,
-            SessionExercises = new List<SessionExercise>()
-        };
+        // var session = new WorkoutSession
+        // {
+        //     UserId = userId,
+        //     StartTime = DateTime.UtcNow,
+        //     EndTime = null,
+        //     SessionExercises = new List<SessionExercise>()
+        // };
 
-        // Snapshot (Data copy)
-        if (dto.WorkoutId.HasValue)
-        {
-            var workoutTemplate = await _context.Workouts
-                .Include(w => w.Exercises)
-                .FirstOrDefaultAsync(w => w.Id == dto.WorkoutId);
+        // // Snapshot (Data copy)
+        // if (dto.WorkoutId.HasValue)
+        // {
+        //     var workoutTemplate = await _context.Workouts
+        //         .Include(w => w.Exercises)
+        //         .FirstOrDefaultAsync(w => w.Id == dto.WorkoutId);
 
-            if (workoutTemplate != null)
-            {
-                session.WorkoutId = workoutTemplate.Id;
-                session.WorkoutNameSnapshot = workoutTemplate.Name;
+        //     if (workoutTemplate != null)
+        //     {
+        //         session.WorkoutId = workoutTemplate.Id;
+        //         session.WorkoutNameSnapshot = workoutTemplate.Name;
 
-                int order = 1;
-                foreach (var exercise in workoutTemplate.Exercises)
-                {
-                    session.SessionExercises.Add(new SessionExercise
-                    {
-                        ExerciseId = exercise.Id,
-                        ExerciseNameSnapshot = exercise.Name,
-                        MuscleGroupSnapshot = exercise.PrimaryMuscleGroup,
-                        OrderIndex = order++,
-                        Sets = new List<SessionSet>()
-                    });
-                }
-            }
-        }
-        else
-        {
-            session.WorkoutNameSnapshot = "Treino Livre";
-        }
+        //         int order = 1;
+        //         foreach (var exercise in workoutTemplate.Exercises)
+        //         {
+        //             session.SessionExercises.Add(new SessionExercise
+        //             {
+        //                 ExerciseId = exercise.Id,
+        //                 ExerciseNameSnapshot = exercise.Name,
+        //                 MuscleGroupSnapshot = exercise.PrimaryMuscleGroup,
+        //                 OrderIndex = order++,
+        //                 Sets = new List<SessionSet>()
+        //             });
+        //         }
+        //     }
+        // }
+        // else
+        // {
+        //     session.WorkoutNameSnapshot = "Treino Livre";
+        // }
 
-        _context.WorkoutSessions.Add(session);
-        await _context.SaveChangesAsync();
+        // _context.WorkoutSessions.Add(session);
+        // await _context.SaveChangesAsync();
 
-        return MapToDto(session);
+        return null; // MapToDto(session);
     }
 
     public async Task<SessionDetailsDto?> FinishUserWorkoutSessionAsync(int sessionId, FinishSessionDto dto, int userId)
