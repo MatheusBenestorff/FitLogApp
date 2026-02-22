@@ -7,6 +7,7 @@ import { Workouts } from "./pages/Workouts";
 import { Exercises } from "./pages/Exercises";
 import { CreateWorkout } from "./pages/CreateWorkout";
 import { WorkoutDetails } from "./pages/WorkoutDetails";
+import { EditWorkout } from "./pages/EditWorkout";
 import { Dashboard } from "./pages/Dashboard";
 import { Profile } from "./pages/Profile";
 
@@ -38,6 +39,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/workouts" element={<Workouts />} />
             <Route path="/workouts/:id" element={<WorkoutDetails />} /> 
+            <Route path="/workouts/edit/:id" element={<EditWorkout />} /> 
             <Route path="/workouts/new" element={<CreateWorkout />} />
             <Route path="/exercises" element={<Exercises />} />
             <Route path="/profile" element={<Profile />} />
