@@ -8,7 +8,7 @@ public class SessionSet
     public SessionExercise SessionExercise { get; set; }
 
     public int Reps { get; set; }
-    public float Weight { get; set; }
+    public double Weight { get; set; }
 
     public int OrderIndex { get; set; }
 }

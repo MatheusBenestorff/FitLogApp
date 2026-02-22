@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { workoutService } from "../services/workoutService";
 import type { Exercise } from "../types/exercise"; 
-import type { UpdateWorkoutDto } from "../types/workout"; 
+import type { UpdateWorkoutDto, FormWorkoutExercise } from "../types/workout"; 
 import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { 
   ArrowLeft, 
@@ -12,24 +12,12 @@ import {
   Loader2
 } from "lucide-react";
 
-interface WorkoutSet {
-    weight: string;
-    reps: string;
-  }
-  
-  interface WorkoutExercise {
-    id: number;
-    name: string;
-    primaryMuscleGroup: string;
-    imageUrl?: string | null;
-    sets: WorkoutSet[];
-  }
 
 export const EditWorkout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [selectedExercises, setSelectedExercises] = useState<WorkoutExercise[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<FormWorkoutExercise[]>([]);
   const [workoutName, setWorkoutName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +33,7 @@ export const EditWorkout: React.FC = () => {
       const data = await workoutService.getById(workoutId);
       setWorkoutName(data.name);
 
-      const mappedExercises: WorkoutExercise[] = data.exercises.map((ex) => ({
+      const mappedExercises: FormWorkoutExercise[] = data.exercises.map((ex) => ({
         id: ex.exerciseId,
         name: ex.name,
         primaryMuscleGroup: ex.primaryMuscleGroup,
@@ -138,7 +126,7 @@ export const EditWorkout: React.FC = () => {
       await workoutService.update(parseInt(id), payload);
       navigate(`/workouts/${id}`); 
     } catch (error) {
-      alert("Error updating routine.");
+      alert("Error updating workout.");
     } finally {
       setIsSaving(false);
     }
@@ -166,14 +154,14 @@ export const EditWorkout: React.FC = () => {
             <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-800 transition-colors">
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-xl font-bold text-gray-800">Edit Routine</h1>
+            <h1 className="text-xl font-bold text-gray-800">Edit Workout</h1>
           </div>
           <button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors disabled:opacity-50 text-sm"
           >
-            {isSaving ? "Updating..." : "Update Routine"}
+            {isSaving ? "Updating..." : "Update Workout"}
           </button>
         </header>
 

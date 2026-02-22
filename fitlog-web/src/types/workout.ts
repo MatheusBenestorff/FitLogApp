@@ -51,4 +51,17 @@ export interface CreateWorkoutDto {
   exercises: CreateWorkoutExerciseDto[];
 }
 
+export interface FormWorkoutSet {
+  weight: string;
+  reps: string;
+}
+
+export interface FormWorkoutExercise {
+  id: number;
+  name: string;
+  primaryMuscleGroup: string;
+  imageUrl?: string | null;
+  sets: FormWorkoutSet[];
+}
+
 export interface UpdateWorkoutDto extends CreateWorkoutDto {}

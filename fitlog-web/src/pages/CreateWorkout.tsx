@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { workoutService } from "../services/workoutService";
 import type { Exercise } from "../types/exercise"; 
-import type { CreateWorkoutDto } from "../types/workout"; 
+import type { CreateWorkoutDto, FormWorkoutExercise} from "../types/workout"; 
 import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { 
   ArrowLeft, 
@@ -11,19 +11,11 @@ import {
   GripVertical 
 } from "lucide-react";
 
-interface WorkoutSet {
-  weight: string;
-  reps: string;
-}
-
-interface WorkoutExercise extends Exercise {
-  sets: WorkoutSet[];
-}
 
 export const CreateWorkout: React.FC = () => {
   const navigate = useNavigate();
 
-  const [selectedExercises, setSelectedExercises] = useState<WorkoutExercise[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<FormWorkoutExercise[]>([]);
   const [workoutName, setWorkoutName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 

@@ -37,49 +37,57 @@ public class WorkoutSessionService : IWorkoutSessionService
 
     public async Task<SessionDetailsDto> StartUserWorkoutSessionAsync(StartSessionDto dto, int userId)
     {
-        // var session = new WorkoutSession
-        // {
-        //     UserId = userId,
-        //     StartTime = DateTime.UtcNow,
-        //     EndTime = null,
-        //     SessionExercises = new List<SessionExercise>()
-        // };
+        var session = new WorkoutSession
+        {
+            UserId = userId,
+            StartTime = DateTime.UtcNow,
+            EndTime = null,
+            SessionExercises = new List<SessionExercise>()
+        };
 
-        // // Snapshot (Data copy)
-        // if (dto.WorkoutId.HasValue)
-        // {
-        //     var workoutTemplate = await _context.Workouts
-        //         .Include(w => w.Exercises)
-        //         .FirstOrDefaultAsync(w => w.Id == dto.WorkoutId);
+        if (dto.WorkoutId.HasValue)
+        {
+            var workoutTemplate = await _context.Workouts
+                .Include(w => w.WorkoutExercises)
+                    .ThenInclude(we => we.Exercise)
+                .Include(w => w.WorkoutExercises)
+                    .ThenInclude(we => we.Sets)
+                .FirstOrDefaultAsync(w => w.Id == dto.WorkoutId && w.UserId == userId); 
 
-        //     if (workoutTemplate != null)
-        //     {
-        //         session.WorkoutId = workoutTemplate.Id;
-        //         session.WorkoutNameSnapshot = workoutTemplate.Name;
+            if (workoutTemplate != null)
+            {
+                session.WorkoutId = workoutTemplate.Id;
+                session.WorkoutNameSnapshot = workoutTemplate.Name;
 
-        //         int order = 1;
-        //         foreach (var exercise in workoutTemplate.Exercises)
-        //         {
-        //             session.SessionExercises.Add(new SessionExercise
-        //             {
-        //                 ExerciseId = exercise.Id,
-        //                 ExerciseNameSnapshot = exercise.Name,
-        //                 MuscleGroupSnapshot = exercise.PrimaryMuscleGroup,
-        //                 OrderIndex = order++,
-        //                 Sets = new List<SessionSet>()
-        //             });
-        //         }
-        //     }
-        // }
-        // else
-        // {
-        //     session.WorkoutNameSnapshot = "Treino Livre";
-        // }
+                var orderedExercises = workoutTemplate.WorkoutExercises.OrderBy(we => we.OrderIndex).ToList();
 
-        // _context.WorkoutSessions.Add(session);
-        // await _context.SaveChangesAsync();
+                foreach (var we in orderedExercises)
+                {
+                    session.SessionExercises.Add(new SessionExercise
+                    {
+                        ExerciseId = we.ExerciseId,
+                        ExerciseNameSnapshot = we.Exercise.Name, 
+                        MuscleGroupSnapshot = we.Exercise.PrimaryMuscleGroup,
+                        OrderIndex = we.OrderIndex,
+                        Sets = we.Sets.OrderBy(s => s.OrderIndex).Select(s => new SessionSet
+                        {
+                            OrderIndex = s.OrderIndex,
+                            Weight = s.TargetWeight ?? 0, 
+                            Reps = s.TargetReps ?? 0
+                        }).ToList()
+                    });
+                }
+            }
+        }
+        else
+        {
+            session.WorkoutNameSnapshot = "Treino Livre";
+        }
 
-        return null; // MapToDto(session);
+        _context.WorkoutSessions.Add(session);
+        await _context.SaveChangesAsync();
+
+        return MapToDto(session);
     }
 
     public async Task<SessionDetailsDto?> FinishUserWorkoutSessionAsync(int sessionId, FinishSessionDto dto, int userId)
@@ -101,10 +109,15 @@ public class WorkoutSessionService : IWorkoutSessionService
 
         session.SessionExercises = new List<SessionExercise>();
 
+        var exerciseIds = dto.Exercises.Select(e => e.ExerciseId).Distinct().ToList();
+        var originalExercises = await _context.Exercises
+            .Where(e => exerciseIds.Contains(e.Id))
+            .ToDictionaryAsync(e => e.Id);
+
         foreach (var exerciseDto in dto.Exercises)
         {
-            var originalExercise = await _context.Exercises.FindAsync(exerciseDto.ExerciseId);
-            if (originalExercise == null) continue;
+            if (!originalExercises.TryGetValue(exerciseDto.ExerciseId, out var originalExercise)) 
+                continue;
 
             var newSessionExercise = new SessionExercise
             {
@@ -128,7 +141,6 @@ public class WorkoutSessionService : IWorkoutSessionService
 
         return MapToDto(session);
     }
-
 
     // Aux
     private static SessionDetailsDto MapToDto(WorkoutSession session)
