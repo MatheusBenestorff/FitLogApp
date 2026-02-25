@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fitlog-api", "fitlog-api.csproj", "{D05A6635-94DE-4232-A4C3-5FD810B211E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitLogApp.tests", "FitLogApp.tests\FitLogApp.tests.csproj", "{54F33950-AE33-4413-8A02-C3FB33DC0A49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitLogApp.tests", "..\FitLogApp.tests\FitLogApp.tests.csproj", "{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,18 +29,18 @@ Global
 		{D05A6635-94DE-4232-A4C3-5FD810B211E4}.Release|x64.Build.0 = Release|Any CPU
 		{D05A6635-94DE-4232-A4C3-5FD810B211E4}.Release|x86.ActiveCfg = Release|Any CPU
 		{D05A6635-94DE-4232-A4C3-5FD810B211E4}.Release|x86.Build.0 = Release|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Debug|x64.Build.0 = Debug|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Debug|x86.Build.0 = Debug|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Release|x64.ActiveCfg = Release|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Release|x64.Build.0 = Release|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Release|x86.ActiveCfg = Release|Any CPU
-		{54F33950-AE33-4413-8A02-C3FB33DC0A49}.Release|x86.Build.0 = Release|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Debug|x64.Build.0 = Debug|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Debug|x86.Build.0 = Debug|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Release|x64.ActiveCfg = Release|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Release|x64.Build.0 = Release|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Release|x86.ActiveCfg = Release|Any CPU
+		{1ED8636B-CE3F-4203-AF47-DC4C44B212BD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
