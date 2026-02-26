@@ -12,7 +12,7 @@ services:
       - "5432:5432"
 
   fitlog-api:
-    build: ./fitlog-api
+    build: ./FitLogApp.api
     restart: always
     environment:
       #Adicionar quando for aplicar novas migrations no banco
@@ -24,11 +24,11 @@ services:
       - fitlog-db
 
   fitlog-web:
-    build: ./fitlog-web
+    build: ./FitLogApp.web
     ports:
       - "3000:5173"
     volumes:
-      - ./fitlog-web:/app
+      - ./FitLogApp.web:/app
       - /app/node_modules
     environment:
       - VITE_API_URL=http://localhost:8080/api
