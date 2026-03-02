@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-  <ProjectReference Include="..\fitlog-api\fitlog-api.csproj" />
+  <ProjectReference Include="..\FitLogApp.api\fitlog-api.csproj" />
   </ItemGroup>
 
 </Project>
